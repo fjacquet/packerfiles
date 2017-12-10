@@ -1,0 +1,96 @@
+{
+  "builders": [
+    {
+      "type": "vmware-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "headless": "{{user `headless`}}",
+      "boot_wait": "2m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "2h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "windows8srv-64",
+      "tools_upload_flavor": "windows",
+      "disk_size": "{{user `disk_size`}}",
+      "vnc_port_min": 5900,
+      "vnc_port_max": 5980,
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/powershell/fixnetwork.ps1",
+        "./scripts/microsoft-updates.bat",
+        "./scripts/powershell/win-updates.ps1",
+        "./scripts/powershell/openssh.ps1"
+      ],
+      "vmx_data": {
+        "RemoteDisplay.vnc.enabled": "false",
+        "RemoteDisplay.vnc.port": "5900",
+        "memsize": "{{user `memory_size`}}",
+        "numvcpus": "{{user `cpus`}}",
+        "firmware": "efi",
+        "scsi0.virtualDev": "lsisas1068"
+      }
+    },
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "headless": "{{user `headless`}}",
+      "boot_wait": "2m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "2h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "Windows10_64",
+      "disk_size": "{{user `disk_size`}}",
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/powershell/fixnetwork.ps1",
+        "./scripts/powershell/microsoft-updates.bat",
+        "./scripts/powershell/win-updates.ps1",
+        "./scripts/powershell/openssh.ps1"
+      ],
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "{{user `memory_size`}}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "{{user `cpus`}}"
+        ]
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "remote_path": "/tmp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "./scripts/batch/vm-guest-tools.bat",
+        "./scripts/batch/vagrant-ssh.bat",
+        "./scripts/batch/disable-auto-logon.bat",
+        "./scripts/batch/enable-rdp.bat",
+        "./scripts/batch/compile-dotnet-assemblies.bat",
+        "./scripts/batch/compact.bat"
+      ]
+    }
+  ],
+  "variables": {
+    "iso_url": "http://care.dlservice.microsoft.com/dl/download/C/3/9/C399EEA8-135D-4207-92C9-6AAB3259F6EF/10240.16384.150709-1700.TH1_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
+    "iso_checksum_type": "sha1",
+    "iso_checksum": "56ab095075be28a90bc0b510835280975c6bb2ce",
+    "autounattend": "./answer_files/10/Autounattend.xml",
+    "headless": "false",
+    "cpus": "2",
+    "memory_size": "4096",
+    "disk_size": "61440"
+  }
+}

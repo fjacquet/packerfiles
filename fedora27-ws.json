@@ -1,0 +1,132 @@
+{
+  "_command": "Build with `packer build fedora27-server.json`",
+  "builders": [
+    {
+      "type": "vmware-iso",
+      "boot_command": [
+        "<tab> linux text biosdevname=0 ks=http://{{ .HTTPIP }}:{{ .HTTPPort}}/{{ user `kickstart` }}<enter><enter>"
+      ],
+      "disk_size": "{{ user `disk_size` }}",
+      "guest_os_type": "{{ user `vmware_guest_os_type` }}",
+      "output_directory": "./output-f-{{ user `vm_name` }}-base/",
+      "headless": "{{ user `headless` }}",
+      "http_directory": "http",
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+      "iso_urls": [
+        "{{ user `iso_path` }}/{{ user `iso_name` }}",
+        "{{ user `iso_url` }}"
+      ],
+      "shutdown_command": "{{ user `shutdown_command` }}",
+      "ssh_password": "{{ user `ssh_password` }}",
+      "ssh_username": "{{ user `ssh_username` }}",
+      "ssh_wait_timeout": "10000s",
+      "vm_name": "{{ user `vm_name` }}",
+      "vmx_data": {
+        "cpuid.coresPerSocket": "1",
+        "memsize": "{{ user `memory` }}",
+        "numvcpus": "{{ user `cpus` }}"
+      }
+    },
+    {
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<tab> linux text biosdevname=0 ks=http://{{ .HTTPIP }}:{{ .HTTPPort}}/{{ user `kickstart` }}<enter><enter>"
+      ],
+      "disk_size": "{{ user `disk_size` }}",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+      "guest_os_type": "{{ user `virtualbox_guest_os_type` }}",
+      "output_directory": "./output-vb-{{ user `vm_name` }}-base/",
+      "headless": "{{ user `headless` }}",
+      "http_directory": "http",
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+      "iso_urls": [
+        "{{ user `iso_path` }}/{{ user `iso_name` }}",
+        "{{ user `iso_url` }}"
+      ],
+      "shutdown_command": "{{ user `shutdown_command` }}",
+      "ssh_password": "{{ user `ssh_password` }}",
+      "ssh_username": "{{ user `ssh_username` }}",
+      "ssh_wait_timeout": "10000s",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "{{ user `memory` }}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "{{ user `cpus` }}"
+        ]
+      ],
+      "virtualbox_version_file": ".vbox_version",
+      "vm_name": "{{ user `vm_name` }}"
+    }
+  ],
+  "provisioners": [
+    {
+      "environment_vars": [
+        "UPDATE={{user `update`}}",
+        "INSTALL_VAGRANT_KEY={{user `install_vagrant_key`}}",
+        "SSH_USERNAME={{user `ssh_username`}}",
+        "SSH_PASSWORD={{user `ssh_password`}}",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "ftp_proxy={{user `ftp_proxy`}}",
+        "rsync_proxy={{user `rsync_proxy`}}",
+        "no_proxy={{user `no_proxy`}}"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "scripts": [
+        "scripts/bash/sshd.sh",
+        "scripts/bash/update.sh",
+        "scripts/bash/vagrant.sh",
+        "scripts/bash/virtualbox.sh",
+        "scripts/bash/parallels.sh",
+        "scripts/bash/custom-script.sh",
+        "scripts/bash/cleanup.sh"
+      ],
+      "type": "shell",
+      "expect_disconnect": "true"
+    }
+  ],
+  "post-processors": [
+  
+    {
+      "type": "shell-local",
+      "only": ["vmware-iso"],
+      "inline": [
+        "ovftool --acceptAllEulas --compress=9  ./output-f-{{ user `vm_name` }}-base/{{user `vm_name`}}.vmx {{user `vm_name`}}.ova"
+      ]
+    }
+  ],
+  "variables": {
+    "ftp_proxy": "{{env `ftp_proxy`}}",
+    "headless": "false",
+    "http_proxy": "{{env `http_proxy`}}",
+    "https_proxy": "{{env `https_proxy`}}",
+    "install_vagrant_key": "true",
+    "no_proxy": "{{env `no_proxy`}}",
+    "rsync_proxy": "{{env `rsync_proxy`}}",
+    "shutdown_command": "echo 'vagrant'|sudo -S shutdown -h now",
+    "ssh_password": "vagrant",
+    "ssh_username": "vagrant",
+    "update": "false",
+    "version": "0.1.0",
+    "virtualbox_guest_os_type": "Fedora_64",
+    "vmware_guest_os_type": "fedora-64",
+    "vm_name": "fedora27-ws",
+    "cpus": "1",
+    "disk_size": "65536",
+    "iso_checksum": "18ef4a6f9f470b40bd0cdf21e6c8f5c43c28e3a2200dcc8578ec9da25a6b376b",
+    "iso_checksum_type": "sha256",
+    "iso_name": "Fedora-Workstation-netinst-x86_64-27-1.6.iso",
+    "iso_url": "http://ftp.astral.ro/mirrors/fedora/pub/fedora/linux/releases/27/Workstation/x86_64/iso/Fedora-Workstation-netinst-x86_64-27-1.6.iso",
+    "kickstart": "ks-fedora27-ws.cfg",
+    "memory": "2048"
+  }
+}

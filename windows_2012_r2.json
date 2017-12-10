@@ -1,0 +1,227 @@
+{
+  "builders": [
+    {
+      "type": "vmware-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "headless": "{{user `headless`}}",
+      "boot_wait": "2m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "6h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "output_directory": "./output-f-{{ user `vm_name` }}/",
+      "vm_name": "{{ user `vm_name` }}",
+      "guest_os_type": "windows8srv-64",
+      "tools_upload_flavor": "windows",
+      "disk_size": "{{user `disk_size`}}",
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/powershell/setup-proxy.ps1",
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
+      ],
+      "vmx_data": {
+        "RemoteDisplay.vnc.enabled": "false",
+        "RemoteDisplay.vnc.port": "5900",
+        "memsize": "{{user `memory_size`}}",
+        "numvcpus": "{{user `cpus`}}",
+        "scsi0.virtualDev": "lsisas1068"
+      }
+    },
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "headless": "{{user `headless`}}",
+      "boot_wait": "2m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "6h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "output_directory": "./output-vb-{{ user `vm_name` }}-base/",
+      "vm_name": "{{ user `vm_name` }}-base",
+      "guest_additions_mode": "attach",
+      "guest_os_type": "Windows2016_64",
+      "hard_drive_interface": "sata",
+      "hard_drive_nonrotational": "true",
+      "disk_size": "{{user `disk_size`}}",
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/powershell/setup-proxy.ps1",
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
+      ],
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--nictype1",
+          "82540EM"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpuhotplug",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--pae",
+          "off"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--usbxhci",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "{{user `memory_size`}}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "48"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "{{user `cpus`}}"
+        ]
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "inline": [
+        "$env:chocolateyUseWindowsCompression = 'false'",
+        "iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/powershell/install-chocolatey.ps1"
+      ]
+    },
+    {
+      "type": "shell",
+      "remote_path": "/tmp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "./scripts/batch/enable-rdp.bat"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/powershell/setup-proxy.ps1",
+        "./scripts/powershell/install-guest-tools.ps1",
+        "./scripts/powershell/setup-win_step_1_2012.ps1"
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_timeout": "20m"
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/powershell/setup-win_step2.ps1",
+        "./scripts/powershell/install-psgallery.ps1",
+        "./scripts/powershell/disable-hibernate.ps1",
+        "./scripts/powershell/optimize-drive.ps1",
+        "./scripts/powershell/install-WindowsUpdates.ps1"
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_timeout": "20m"
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/powershell/install-WindowsUpdates.ps1"
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_timeout": "20m"
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/powershell/install-WindowsUpdates.ps1"
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_timeout": "20m"
+    },
+    {
+      "type": "shell",
+      "remote_path": "/tmp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "./scripts/batch/compile-dotnet-assemblies.bat",
+        "./scripts/batch/compact.bat"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/powershell/setup-sysprep.ps1",
+        "./scripts/powershell/disable-autologin.ps1"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "shell-local",
+      "only": [
+        "vmware-iso"
+      ],
+      "inline": [
+        "ovftool --acceptAllEulas --compress=9 --overwrite  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
+      ]
+    },
+    {
+      "type": "shell-local",
+      "only": [
+        "vmware-iso"
+      ],
+      "inline": [
+        "rm -rf ./output-f-{{ user `vm_name` }}/"
+      ]
+    }
+  ],
+  "variables": {
+    "iso_url": "http://download.microsoft.com/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.ISO",
+    "iso_checksum_type": "md5",
+    "iso_checksum": "458ff91f8abc21b75cb544744bf92e6a",
+    "autounattend": "./answer_files/2012_r2/Autounattend.xml",
+    "disk_size": "81920",
+    "memory_size": "4096",
+    "cpus": "2",
+    "vm_name": "win2012r2",
+    "headless": "false"
+  }
+}

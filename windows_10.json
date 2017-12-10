@@ -1,0 +1,89 @@
+{
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "headless": "{{user `headless`}}",
+      "boot_wait": "2m",
+      "communicator": "winrm",
+      "winrm_username": "{{user `username`}}",
+      "winrm_password": "{{user `password`}}",
+      "winrm_insecure": "true",
+      "winrm_use_ssl": "false",
+      "winrm_timeout": "4h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "Windows10_64",
+      "disk_size": "{{user `disk_size`}}",
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/fixnetwork.ps1",
+        "./scripts/configure-winrm.ps1",
+        "./scripts/chocolatey.ps1",
+        "./scripts/disable-autologin.ps1",
+        "./scripts/disable-hibernate.ps1",
+        "./scripts/win-updates.ps1",
+        "./scripts/vm-guest-tools.bat",
+        "./scripts/openssh.ps1",
+        "./scripts/enable-rdp.bat"
+      ],
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "{{user `memory_size`}}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "{{user `cpus`}}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "256"
+        ]
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/chocolatey.ps1",
+        "./scripts/disable-autologin.ps1",
+        "./scripts/disable-hibernate.ps1",
+        "./scripts/win-updates.ps1"
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot complete'}}\""
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "windows_10_{{.Provider}}.box",
+      "vagrantfile_template": "vagrantfile-windows_10.template"
+    }
+  ],
+  "variables": {
+    "iso_url": "http://care.dlservice.microsoft.com/dl/download/C/3/9/C399EEA8-135D-4207-92C9-6AAB3259F6EF/10240.16384.150709-1700.TH1_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
+    "iso_checksum_type": "sha1",
+    "iso_checksum": "56ab095075be28a90bc0b510835280975c6bb2ce",
+    "autounattend": "./answer_files/10/Autounattend.xml",
+    "headless": "true",
+    "username": "vagrant",
+    "password": "vagrant",
+    "cpus": "4",
+    "memory_size": "8192",
+    "disk_size": "61440"
+  }
+}

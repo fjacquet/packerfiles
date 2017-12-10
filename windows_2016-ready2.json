@@ -1,0 +1,74 @@
+{
+  "builders": [
+    {
+      "type": "vmware-vmx",
+      "source_path": "./output-f-{{ user `os_name` }}-base/win2016-base.vmx",
+      "output_directory": "./output-f-{{ user `os_name` }}-ready/",
+      "headless": "{{user `headless`}}",
+      "boot_wait": "2m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "6h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\""
+    },
+    {
+      "type": "virtualbox-ovf",
+      "source_path": "./output-vb-{{ user `os_name` }}-base/win2016-base.ovf",
+      "output_directory": "./output-vb-{{ user `os_name` }}-ready/",
+      "headless": "{{user `headless`}}",
+      "boot_wait": "2m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "6h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_additions_mode": "disable",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "4096"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "48"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ]
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "remote_path": "/tmp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "./scripts/vagrant-ssh.bat",
+        "./scripts/enable-rdp.bat"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/setup-proxy.ps1",
+        "./scripts/setup-win_step1.ps1",
+        "./scripts/setup-win_step2.ps1",
+        "./scripts/install-chocolatey.ps1",
+        "./scripts/install-psgallery.ps1",
+        "./scripts/disable-hibernate.ps1",
+        "./scripts/optimize-drive.ps1"
+      ]
+    }
+  ],
+  "variables": {
+    "headless": "false",
+    "os_name": "win2016"
+  }
+}
