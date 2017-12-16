@@ -50,20 +50,20 @@
       "remote_path": "/tmp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
-        "./scripts/vagrant-ssh.bat",
-        "./scripts/enable-rdp.bat"
+        "./scripts/batch/vagrant-ssh.bat",
+        "./scripts/batch/enable-rdp.bat"
       ]
     },
     {
       "type": "powershell",
       "scripts": [
-        "./scripts/setup-proxy.ps1",
-        "./scripts/setup-win_step1.ps1",
-        "./scripts/setup-win_step2.ps1",
-        "./scripts/install-chocolatey.ps1",
-        "./scripts/install-psgallery.ps1",
-        "./scripts/disable-hibernate.ps1",
-        "./scripts/optimize-drive.ps1"
+        "./scripts/powershell/setup-proxy.ps1",
+        "./scripts/powershell/setup-win_step1.ps1",
+        "./scripts/powershell/setup-win_step2.ps1",
+        "./scripts/powershell/install-chocolatey.ps1",
+        "./scripts/powershell/install-psgallery.ps1",
+        "./scripts/powershell/disable-hibernate.ps1",
+        "./scripts/powershell/optimize-drive.ps1"
       ]
     }
   ],
