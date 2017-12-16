@@ -1,33 +1,65 @@
 {
   "builders": [
     {
-      "type": "virtualbox-iso",
-      "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "headless": "{{user `headless`}}",
+      "access_key": "{{user `aws_access_key`}}",
+      "ami_name": "{{user `vm_name`}}",
+      "instance_type": "{{user `aws_instance_type`}}",
+      "region": "{{user `aws_region`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "source_ami": "{{user `aws_source_ami`}}",
+      "ssh_agent_auth": "true",
+      "ssh_keypair_name": "{{user `ssh_keypair_name`}}",
+      "ssh_username": "{{ user `aws_ssh_username` }}",
+      "subnet_id": "{{user `aws_subnet_id`}}",
+      "type": "amazon-ebs",
+      "vpc_id": "{{user `aws_vpc_id`}}"
+    },
+    {
       "boot_wait": "2m",
-      "communicator": "winrm",
-      "winrm_username": "{{user `username`}}",
-      "winrm_password": "{{user `password`}}",
-      "winrm_insecure": "true",
-      "winrm_use_ssl": "false",
-      "winrm_timeout": "4h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "Windows10_64",
       "disk_size": "{{user `disk_size`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/fixnetwork.ps1",
-        "./scripts/configure-winrm.ps1",
-        "./scripts/chocolatey.ps1",
-        "./scripts/disable-autologin.ps1",
-        "./scripts/disable-hibernate.ps1",
-        "./scripts/win-updates.ps1",
-        "./scripts/vm-guest-tools.bat",
-        "./scripts/openssh.ps1",
-        "./scripts/enable-rdp.bat"
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
+      "guest_os_type": "windows8srv-64",
+      "headless": "{{user `headless`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "2h",
+      "tools_upload_flavor": "windows",
+      "type": "vmware-iso",
+      "vmx_data": {
+        "RemoteDisplay.vnc.enabled": "false",
+        "RemoteDisplay.vnc.port": "5900",
+        "firmware": "efi",
+        "memsize": "{{user `memory_size`}}",
+        "numvcpus": "{{user `cpus`}}",
+        "scsi0.virtualDev": "lsisas1068"
+      },
+      "vnc_port_max": 5980,
+      "vnc_port_min": 5900
+    },
+    {
+      "boot_wait": "2m",
+      "communicator": "winrm",
+      "disk_size": "{{user `disk_size`}}",
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
+      ],
+      "guest_os_type": "Windows10_64",
+      "headless": "{{user `headless`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "type": "virtualbox-iso",
       "vboxmanage": [
         [
           "modifyvm",
@@ -47,43 +79,70 @@
           "--vram",
           "256"
         ]
-      ]
-    }
-  ],
-  "provisioners": [
-    {
-      "type": "powershell",
-      "scripts": [
-        "./scripts/chocolatey.ps1",
-        "./scripts/disable-autologin.ps1",
-        "./scripts/disable-hibernate.ps1",
-        "./scripts/win-updates.ps1"
-      ]
-    },
-    {
-      "type": "windows-restart",
-      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
-      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot complete'}}\""
+      ],
+      "winrm_insecure": "true",
+      "winrm_password": "{{user `password`}}",
+      "winrm_timeout": "4h",
+      "winrm_use_ssl": "false",
+      "winrm_username": "{{user `username`}}"
     }
   ],
   "post-processors": [
     {
-      "type": "vagrant",
-      "keep_input_artifact": false,
-      "output": "windows_10_{{.Provider}}.box",
-      "vagrantfile_template": "vagrantfile-windows_10.template"
+      "inline": [
+        "ovftool --acceptAllEulas --compress=9 --overwrite  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
+      ],
+      "only": [
+        "vmware-iso"
+      ],
+      "type": "shell-local"
+    },
+    {
+      "inline": [
+        "rm -rf ./output-f-{{ user `vm_name` }}/"
+      ],
+      "only": [
+        "vmware-iso"
+      ],
+      "type": "shell-local"
+    }
+  ],
+  "provisioners": [
+    {
+      "scripts": [
+        "./scripts/powershell/install-chocolatey.ps1",
+        "./scripts/powershell/disable-autologin.ps1",
+        "./scripts/powershell/disable-hibernate.ps1",
+        "./scripts/powershell/install-WindowsUpdates.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot complete'}}\"",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "type": "windows-restart"
     }
   ],
   "variables": {
-    "iso_url": "http://care.dlservice.microsoft.com/dl/download/C/3/9/C399EEA8-135D-4207-92C9-6AAB3259F6EF/10240.16384.150709-1700.TH1_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
-    "iso_checksum_type": "sha1",
-    "iso_checksum": "56ab095075be28a90bc0b510835280975c6bb2ce",
     "autounattend": "./answer_files/10/Autounattend.xml",
-    "headless": "true",
-    "username": "vagrant",
-    "password": "vagrant",
+    "aws_access_key": "",
+    "aws_instance_type": "t2.micro",
+    "aws_region": "eu-west-1",
+    "aws_secret_key": "",
+    "aws_source_ami": "ami-bb9a6bc2",
+    "aws_ssh_username": "ec2-user",
+    "aws_subnet_id": "subnet-06621e5d",
+    "aws_vpc_id": "vpc-78050c1f",
     "cpus": "4",
+    "disk_size": "81920",
+    "headless": "true",
+    "is_ssd": "true",
+    "iso_checksum": "56ab095075be28a90bc0b510835280975c6bb2ce",
+    "iso_checksum_type": "sha1",
+    "iso_url": "http://care.dlservice.microsoft.com/dl/download/C/3/9/C399EEA8-135D-4207-92C9-6AAB3259F6EF/10240.16384.150709-1700.TH1_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
     "memory_size": "8192",
-    "disk_size": "61440"
+    "password": "vagrant",
+    "username": "vagrant",
+    "vm_name": "win10bis"
   }
 }

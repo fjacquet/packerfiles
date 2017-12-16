@@ -18,9 +18,9 @@
       "vnc_port_max": 5980,
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/powershell/setup-proxy.ps1",
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
@@ -45,9 +45,9 @@
       "disk_size": "{{user `disk_size`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/powershell/setup-proxy.ps1",
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
       "vboxmanage": [
         [
@@ -79,9 +79,9 @@
       "disk_size": "{{user `disk_size`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/powershell/setup-proxy.ps1",
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
       "prlctl": [
         [
@@ -113,20 +113,31 @@
       "remote_path": "/tmp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
-        "./scripts/vm-guest-tools.bat",
-        "./scripts/vagrant-ssh.bat",
-        "./scripts/disable-auto-logon.bat",
-        "./scripts/enable-rdp.bat",
-        "./scripts/compact.bat"
+        "./scripts/batch/setup-vm-guesttools.bat",
+        "./scripts/batch/vagrant-ssh.bat",
+        "./scripts/batch/enable-rdp.bat",
+        "./scripts/batch/compact.bat"
       ]
     }
   ],
   "post-processors": [
     {
-      "type": "vagrant",
-      "keep_input_artifact": false,
-      "output": "windows_2008_r2_core_{{.Provider}}.box",
-      "vagrantfile_template": "vagrantfile-windows_2008_r2.template"
+      "inline": [
+        "ovftool --acceptAllEulas --compress=9 --overwrite  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
+      ],
+      "only": [
+        "vmware-iso"
+      ],
+      "type": "shell-local"
+    },
+    {
+      "inline": [
+        "rm -rf ./output-f-{{ user `vm_name` }}/"
+      ],
+      "only": [
+        "vmware-iso"
+      ],
+      "type": "shell-local"
     }
   ],
   "variables": {

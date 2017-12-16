@@ -2,8 +2,8 @@
   "builders": [
     {
       "type": "vmware-vmx",
-      "source_path": "./output-f-{{ user `os_name` }}-base/win2016-base.vmx",
-      "output_directory": "./output-f-{{ user `os_name` }}-ready/",
+      "source_path": "./output-f-{{ user `vm_name` }}-base/win2016-base.vmx",
+      "output_directory": "./output-f-{{ user `vm_name` }}-ready/",
       "headless": "{{user `headless`}}",
       "boot_wait": "2m",
       "ssh_username": "vagrant",
@@ -13,8 +13,8 @@
     },
     {
       "type": "virtualbox-ovf",
-      "source_path": "./output-vb-{{ user `os_name` }}-base/win2016-base.ovf",
-      "output_directory": "./output-vb-{{ user `os_name` }}-ready/",
+      "source_path": "./output-vb-{{ user `vm_name` }}-base/win2016-base.ovf",
+      "output_directory": "./output-vb-{{ user `vm_name` }}-ready/",
       "headless": "{{user `headless`}}",
       "boot_wait": "2m",
       "ssh_username": "vagrant",
@@ -67,8 +67,19 @@
       ]
     }
   ],
+  "post-processors": [
+    {
+      "type": "shell-local",
+      "only": [
+        "vmware-vmx"
+      ],
+      "inline": [
+        "ovftool --acceptAllEulas --compress=9  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
+      ]
+    }
+  ],
   "variables": {
     "headless": "false",
-    "os_name": "win2016"
+    "vm_name": "win2016"
   }
 }
