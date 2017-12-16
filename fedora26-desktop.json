@@ -159,7 +159,7 @@
     "update": "false",
     "version": "0.1.0",
     "virtualbox_guest_os_type": "Fedora_64",
-    "vm_name": "fedora26-ws",
+    "vm_name": "fedora26-desktop",
     "vmware_guest_os_type": "fedora-64"
   }
 }
