@@ -95,15 +95,16 @@
         [
           "modifyvm",
           "{{.Name}}",
-          "--memory",
-          "{{user `memory_size`}}"
+          "--vram",
+          "48"
         ],
         [
           "modifyvm",
           "{{.Name}}",
-          "--vram",
-          "48"
+          "--memory",
+          "{{user `memory_size`}}"
         ],
+      
         [
           "modifyvm",
           "{{.Name}}",

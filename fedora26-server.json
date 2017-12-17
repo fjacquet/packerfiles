@@ -38,7 +38,7 @@
       "vm_name": "{{ user `vm_name` }}",
       "vmx_data": {
         "cpuid.coresPerSocket": "1",
-        "memsize": "{{ user `memory` }}",
+        "memsize": "{{ user `memory_size` }}",
         "numvcpus": "{{ user `cpus` }}"
       }
     },
@@ -69,14 +69,44 @@
         [
           "modifyvm",
           "{{.Name}}",
+          "--nictype1",
+          "82540EM"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpuhotplug",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--pae",
+          "off"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--usbxhci",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
           "--memory",
-          "{{ user `memory` }}"
+          "{{user `memory_size`}}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "48"
         ],
         [
           "modifyvm",
           "{{.Name}}",
           "--cpus",
-          "{{ user `cpus` }}"
+          "{{user `cpus`}}"
         ]
       ],
       "virtualbox_version_file": ".vbox_version",
@@ -152,7 +182,7 @@
     "iso_name": "Fedora-Server-dvd-x86_64-26-1.5.iso",
     "iso_url": "https://download.fedoraproject.org/pub/fedora/linux/releases/26/Server/x86_64/iso/Fedora-Server-dvd-x86_64-26-1.5.iso",
     "kickstart": "ks-fedora26-server.cfg",
-    "memory": "4096",
+    "memory_size": "4096",
     "no_proxy": "{{env `no_proxy`}}",
     "rsync_proxy": "{{env `rsync_proxy`}}",
     "shutdown_command": "echo 'vagrant'|sudo -S shutdown -h now",
