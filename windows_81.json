@@ -237,7 +237,7 @@
     "aws_ssh_username": "ec2-user",
     "aws_subnet_id": "subnet-06621e5d",
     "aws_vpc_id": "vpc-78050c1f",
-    "cpus": "4",
+    "cpus": "2",
     "disk_size": "81920",
     "headless": "true",
     "is_ssd": "true",
