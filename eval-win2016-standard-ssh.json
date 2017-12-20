@@ -169,7 +169,8 @@
     "iso_url": "http://care.dlservice.microsoft.com/dl/download/1/4/9/149D5452-9B29-4274-B6B3-5361DBDA30BC/14393.0.161119-1705.RS1_REFRESH_SERVER_EVAL_X64FRE_EN-US.ISO",
     "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c 'Packer Shutdown'",
     "update": "true",
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "vm_name": "eval-win2016-standard-ssh"
   }
 }
 
