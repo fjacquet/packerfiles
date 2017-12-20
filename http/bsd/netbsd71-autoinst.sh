@@ -18,7 +18,7 @@ PASSWD='$sha1$24018$4wyM9IFq$.N8uIzAmdygZmSu65mTdVLAcc9UP'
 SERIAL=pc
 SERIALSPEED=0
 HOSTNAME=netbsd
-PKGSRC=http://ftp.netbsd.org/pub/pkgsrc
+PKGSRC=https://ftp.netbsd.org/pub/pkgsrc
 IFDEV=wm0
 while getopts "c:C:h:pr:s:S:i:" opt; do
     case $opt in
