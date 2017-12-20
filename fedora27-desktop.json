@@ -1,7 +1,6 @@
 {
-  "_command": "Build with `packer build fedora26-server.json`",
-  "builders": [
-    {
+  "_command": "Build with `packer build fedora27-server.json`",
+  "builders": [{
       "access_key": "{{user `aws_access_key`}}",
       "ami_name": "{{user `vm_name`}}",
       "instance_type": "{{user `aws_instance_type`}}",
@@ -133,33 +132,31 @@
       "type": "shell-local"
     }
   ],
-  "provisioners": [
-    {
-      "environment_vars": [
-        "UPDATE={{user `update`}}",
-        "INSTALL_VAGRANT_KEY={{user `install_vagrant_key`}}",
-        "SSH_USERNAME={{user `ssh_username`}}",
-        "SSH_PASSWORD={{user `ssh_password`}}",
-        "http_proxy={{user `http_proxy`}}",
-        "https_proxy={{user `https_proxy`}}",
-        "ftp_proxy={{user `ftp_proxy`}}",
-        "rsync_proxy={{user `rsync_proxy`}}",
-        "no_proxy={{user `no_proxy`}}"
-      ],
-      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-      "expect_disconnect": "true",
-      "scripts": [
-        "scripts/bash/sshd.sh",
-        "scripts/bash/update.sh",
-        "scripts/bash/vagrant.sh",
-        "scripts/bash/virtualbox.sh",
-        "scripts/bash/vmware.sh",
-        "scripts/bash/custom-script.sh",
-        "scripts/bash/cleanup.sh"
-      ],
-      "type": "shell"
-    }
-  ],
+  "provisioners": [{
+    "environment_vars": [
+      "UPDATE={{user `update`}}",
+      "INSTALL_VAGRANT_KEY={{user `install_vagrant_key`}}",
+      "SSH_USERNAME={{user `ssh_username`}}",
+      "SSH_PASSWORD={{user `ssh_password`}}",
+      "http_proxy={{user `http_proxy`}}",
+      "https_proxy={{user `https_proxy`}}",
+      "ftp_proxy={{user `ftp_proxy`}}",
+      "rsync_proxy={{user `rsync_proxy`}}",
+      "no_proxy={{user `no_proxy`}}"
+    ],
+    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+    "expect_disconnect": "true",
+    "scripts": [
+      "scripts/bash/sshd.sh",
+      "scripts/bash/update.sh",
+      "scripts/bash/vagrant.sh",
+      "scripts/bash/virtualbox.sh",
+      "scripts/bash/parallels.sh",
+      "scripts/bash/custom-script.sh",
+      "scripts/bash/cleanup.sh"
+    ],
+    "type": "shell"
+  }],
   "variables": {
     "aws_access_key": "",
     "aws_instance_type": "t2.micro",
@@ -177,12 +174,12 @@
     "http_proxy": "{{env `http_proxy`}}",
     "https_proxy": "{{env `https_proxy`}}",
     "install_vagrant_key": "true",
-    "iso_checksum": "fad18a43b9cec152fc8a1fd368950eaf59be66b1a15438149a0c3a509c56cf2f",
+    "iso_checksum": "18ef4a6f9f470b40bd0cdf21e6c8f5c43c28e3a2200dcc8578ec9da25a6b376b",
     "iso_checksum_type": "sha256",
-    "iso_name": "Fedora-Server-dvd-x86_64-26-1.5.iso",
-    "iso_url": "https://download.fedoraproject.org/pub/fedora/linux/releases/26/Server/x86_64/iso/Fedora-Server-dvd-x86_64-26-1.5.iso",
-    "kickstart": "ks-fedora26-server.cfg",
-    "memory_size": "4096",
+    "iso_name": "Fedora-Workstation-netinst-x86_64-27-1.6.iso",
+    "iso_url": "http://ftp.astral.ro/mirrors/fedora/pub/fedora/linux/releases/27/Workstation/x86_64/iso/Fedora-Workstation-netinst-x86_64-27-1.6.iso",
+    "kickstart": "ks-fedora27-ws.cfg",
+    "memory_size": "2048",
     "no_proxy": "{{env `no_proxy`}}",
     "rsync_proxy": "{{env `rsync_proxy`}}",
     "shutdown_command": "echo 'vagrant'|sudo -S shutdown -h now",
@@ -192,7 +189,7 @@
     "update": "false",
     "version": "0.1.0",
     "virtualbox_guest_os_type": "Fedora_64",
-    "vm_name": "fedora26-server",
+    "vm_name": "fedora27-desktop",
     "vmware_guest_os_type": "fedora-64"
   }
 }

@@ -1,6 +1,5 @@
 {
-  "builders": [
-    {
+  "builders": [{
       "type": "vmware-iso",
       "iso_url": "{{user `iso_url`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
@@ -18,11 +17,9 @@
       "vnc_port_max": 5980,
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/dis-updates.ps1",
-        "./scripts/hotfix-KB3102810.bat",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/batch/hotfix-KB3102810.bat",
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
@@ -39,6 +36,8 @@
       "iso_checksum": "{{user `iso_checksum`}}",
       "headless": "{{user `headless`}}",
       "boot_wait": "2m",
+      "hard_drive_interface": "sata",
+      "hard_drive_nonrotational": "{{user `is_ssd`}}",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
       "ssh_wait_timeout": "8h",
@@ -47,18 +46,46 @@
       "disk_size": "{{user `disk_size`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/dis-updates.ps1",
-        "./scripts/hotfix-KB3102810.bat",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/batch/hotfix-KB3102810.bat",
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
       "vboxmanage": [
         [
           "modifyvm",
           "{{.Name}}",
+          "--nictype1",
+          "82540EM"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpuhotplug",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--pae",
+          "off"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--usbxhci",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
           "--memory",
           "{{user `memory_size`}}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "48"
         ],
         [
           "modifyvm",
@@ -83,10 +110,9 @@
       "disk_size": "{{user `disk_size`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/dis-updates.ps1",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/batch/hotfix-KB3102810.bat",
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
       "prlctl": [
         [
@@ -112,29 +138,47 @@
       ]
     }
   ],
-  "provisioners": [
+  "provisioners": [{
+    "type": "shell",
+    "remote_path": "/tmp/script.bat",
+    "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+    "scripts": [
+      "./scripts/batch/setup-vm-guesttools.bat",
+      "./scripts/batch/vagrant-ssh.bat",
+      "./scripts/batch/enable-rdp.bat",
+      "./scripts/batch/compile-dotnet-assemblies.bat",
+      "./scripts/batch/compact.bat"
+    ]
+  }],
+  "post-processors": [
     {
-      "type": "shell",
-      "remote_path": "/tmp/script.bat",
-      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
-      "scripts": [
-        "./scripts/vm-guest-tools.bat",
-        "./scripts/vagrant-ssh.bat",
-        "./scripts/disable-auto-logon.bat",
-        "./scripts/enable-rdp.bat",
-        "./scripts/compile-dotnet-assemblies.bat",
-        "./scripts/compact.bat"
-      ]
+      "inline": [
+        "ovftool --acceptAllEulas --compress=9 --overwrite  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
+      ],
+      "only": [
+        "vmware-iso"
+      ],
+      "type": "shell-local"
+    },
+    {
+      "inline": [
+        "rm -rf ./output-f-{{ user `vm_name` }}/"
+      ],
+      "only": [
+        "vmware-iso"
+      ],
+      "type": "shell-local"
     }
   ],
   "variables": {
+    "cpus": "4",
+    "disk_size": "81920",
+    "is_ssd": "true",
     "iso_url": "http://care.dlservice.microsoft.com/dl/download/evalx/win7/x64/EN/7600.16385.090713-1255_x64fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENXEVAL_EN_DVD.iso",
     "iso_checksum_type": "md5",
     "iso_checksum": "1d0d239a252cb53e466d39e752b17c28",
     "autounattend": "./answer_files/7/Autounattend.xml",
     "headless": "true",
-    "cpus": "2",
-    "memory_size": "2048",
-    "disk_size": "61440"
+    "memory_size": "2048"
   }
 }

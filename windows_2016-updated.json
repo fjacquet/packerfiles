@@ -14,7 +14,7 @@
     {
       "type": "virtualbox-ovf",
       "source_path": "./output-vb-{{ user `vm_name` }}-base/win2016-base.ovf",
-      "output_directory": "./output-vb-{{ user `os_vm_namename` }}-ready/",
+      "output_directory": "./output-vb-{{ user `vm_name` }}-ready/",
       "headless": "{{user `headless`}}",
       "boot_wait": "2m",
       "ssh_username": "vagrant",
@@ -27,7 +27,7 @@
           "modifyvm",
           "{{.Name}}",
           "--memory",
-          "{{ user `memory` }}"
+          "4096"
         ],
         [
           "modifyvm",
@@ -39,7 +39,7 @@
           "modifyvm",
           "{{.Name}}",
           "--cpus",
-          "{{ user `cpus` }}"
+          "2"
         ]
       ]
     }
@@ -58,53 +58,28 @@
       "type": "powershell",
       "scripts": [
         "./scripts/powershell/setup-proxy.ps1",
-        "./scripts/powershell/setup-win_step1.ps1"
-      ]
-    },
-    {
-      "type": "windows-restart",
-      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
-      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
-      "restart_timeout": "20m"
-    },
-    {
-      "type": "powershell",
-      "scripts": [
+        "./scripts/powershell/setup-win_step1.ps1",
         "./scripts/powershell/setup-win_step2.ps1",
         "./scripts/powershell/install-chocolatey.ps1",
         "./scripts/powershell/install-psgallery.ps1",
         "./scripts/powershell/disable-hibernate.ps1",
         "./scripts/powershell/optimize-drive.ps1"
       ]
-    },
+    }
+  ],
+  "post-processors": [
     {
-      "type": "windows-restart",
-      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
-      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
-      "restart_timeout": "20m"
-    },
-    {
-      "type": "shell",
-      "remote_path": "/tmp/script.bat",
-      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
-      "scripts": [
-        "./scripts/batch/compile-dotnet-assemblies.bat",
-        "./scripts/batch/compact.bat"
-      ]
-    },
-    {
-      "type": "powershell",
-      "scripts": [
-        "./scripts/powershell/setup-sysprep.ps1",
-        "./scripts/powershell/disable-autologin.ps1"
+      "type": "shell-local",
+      "only": [
+        "vmware-vmx"
+      ],
+      "inline": [
+        "ovftool --acceptAllEulas --compress=9  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
       ]
     }
   ],
   "variables": {
-   
     "headless": "false",
-    "cpus": "2",
-    "memory": "4096",
     "vm_name": "win2016"
   }
 }

@@ -1,60 +1,106 @@
 {
   "builders": [
     {
-      "type": "vmware-iso",
-      "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "headless": "{{user `headless`}}",
+      "access_key": "{{user `aws_access_key`}}",
+      "ami_name": "{{user `vm_name`}}",
+      "instance_type": "{{user `aws_instance_type`}}",
+      "region": "{{user `aws_region`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "source_ami": "{{user `aws_source_ami`}}",
+      "ssh_agent_auth": "true",
+      "ssh_keypair_name": "{{user `ssh_keypair_name`}}",
+      "ssh_username": "{{ user `aws_ssh_username` }}",
+      "subnet_id": "{{user `aws_subnet_id`}}",
+      "type": "amazon-ebs",
+      "vpc_id": "{{user `aws_vpc_id`}}"
+    },
+    {
       "boot_wait": "2m",
-      "ssh_username": "vagrant",
-      "ssh_password": "vagrant",
-      "ssh_wait_timeout": "2h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "windows8srv-64",
-      "tools_upload_flavor": "windows",
       "disk_size": "{{user `disk_size`}}",
-      "vnc_port_min": 5900,
-      "vnc_port_max": 5980,
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
+      "guest_os_type": "windows8srv-64",
+      "headless": "{{user `headless`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "output_directory": "./output-vb-{{ user `vm_name` }}/",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "2h",
+      "tools_upload_flavor": "windows",
+      "type": "vmware-iso",
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
         "RemoteDisplay.vnc.port": "5900",
         "memsize": "{{user `memory_size`}}",
         "numvcpus": "{{user `cpus`}}",
         "scsi0.virtualDev": "lsisas1068"
-      }
+      },
+      "vnc_port_max": 5980,
+      "vnc_port_min": 5900
     },
     {
-      "type": "virtualbox-iso",
-      "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "headless": "{{user `headless`}}",
       "boot_wait": "2m",
-      "ssh_username": "vagrant",
-      "ssh_password": "vagrant",
-      "ssh_wait_timeout": "2h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "Windows81_64",
+      "hard_drive_interface": "sata",
+      "hard_drive_nonrotational": "{{user `is_ssd`}}",
       "disk_size": "{{user `disk_size`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
+      "guest_os_type": "Windows81_64",
+      "headless": "{{user `headless`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "output_directory": "./output-vb-{{ user `vm_name` }}/",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "2h",
+      "type": "virtualbox-iso",
       "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--nictype1",
+          "82540EM"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpuhotplug",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--pae",
+          "off"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--usbxhci",
+          "on"
+        ],
         [
           "modifyvm",
           "{{.Name}}",
           "--memory",
           "{{user `memory_size`}}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "48"
         ],
         [
           "modifyvm",
@@ -65,71 +111,140 @@
       ]
     },
     {
-      "type": "parallels-iso",
-      "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
       "boot_wait": "2m",
-      "ssh_username": "vagrant",
-      "ssh_password": "vagrant",
-      "ssh_wait_timeout": "2h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "win-8.1",
-      "parallels_tools_flavor": "win",
       "disk_size": "{{user `disk_size`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/batch/microsoft-updates.bat",
+        "./scripts/powershell/install-openssh.ps1"
       ],
+      "guest_os_type": "win-8.1",
+      "output_directory": "./output-f-{{ user `vm_name` }}/",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "parallels_tools_flavor": "win",
       "prlctl": [
         [
-          "set", "{{.Name}}",
-          "--memsize", "{{user `memory_size`}}"
+          "set",
+          "{{.Name}}",
+          "--memsize",
+          "{{user `memory_size`}}"
         ],
         [
-          "set", "{{.Name}}",
-          "--cpus", "{{user `cpus`}}"
+          "set",
+          "{{.Name}}",
+          "--cpus",
+          "{{user `cpus`}}"
         ],
         [
-          "set", "{{.Name}}",
-          "--winsystray-in-macmenu", "off"
+          "set",
+          "{{.Name}}",
+          "--winsystray-in-macmenu",
+          "off"
         ],
         [
-          "set", "{{.Name}}",
-          "--startup-view", "window"
+          "set",
+          "{{.Name}}",
+          "--startup-view",
+          "window"
         ],
         [
-          "set", "{{.Name}}",
-          "--efi-boot", "off"
+          "set",
+          "{{.Name}}",
+          "--efi-boot",
+          "off"
         ]
-      ]
+      ],
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "2h",
+      "type": "parallels-iso"
+    }
+  ],
+  "post-processors": [
+    {
+      "inline": [
+        "ovftool --acceptAllEulas --compress=9 --overwrite  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
+      ],
+      "only": [
+        "vmware-iso"
+      ],
+      "type": "shell-local"
+    },
+    {
+      "inline": [
+        "rm -rf ./output-f-{{ user `vm_name` }}/"
+      ],
+      "only": [
+        "vmware-iso"
+      ],
+      "type": "shell-local"
     }
   ],
   "provisioners": [
     {
-      "type": "shell",
-      "remote_path": "/tmp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "remote_path": "/tmp/script.bat",
       "scripts": [
-        "./scripts/vm-guest-tools.bat",
-        "./scripts/vagrant-ssh.bat",
-        "./scripts/disable-auto-logon.bat",
-        "./scripts/enable-rdp.bat",
-        "./scripts/compile-dotnet-assemblies.bat",
-        "./scripts/compact.bat"
-      ]
+        "./scripts/batch/setup-vm-guesttools.bat",
+        "./scripts/batch/vagrant-ssh.bat",
+        "./scripts/batch/enable-rdp.bat",
+        "./scripts/batch/compile-dotnet-assemblies.bat",
+        "./scripts/batch/compact.bat"
+      ],
+      "type": "shell"
+    },
+    {
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_timeout": "20m",
+      "type": "windows-restart"
+    },
+    {
+      "scripts": [
+        "./scripts/powershell/install-WindowsUpdates.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_timeout": "20m",
+      "type": "windows-restart"
+    },
+    {
+      "scripts": [
+        "./scripts/powershell/install-WindowsUpdates.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_timeout": "20m",
+      "type": "windows-restart"
     }
   ],
   "variables": {
-    "iso_url": "http://download.microsoft.com/download/B/9/9/B999286E-0A47-406D-8B3D-5B5AD7373A4A/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_ENTERPRISE_EVAL_EN-US-IRM_CENA_X64FREE_EN-US_DV5.ISO",
-    "iso_checksum_type": "md5",
-    "iso_checksum": "5e4ecb86fd8619641f1d58f96e8561ec",
     "autounattend": "./answer_files/81/Autounattend.xml",
-    "headless": "true",
+    "aws_access_key": "",
+    "aws_instance_type": "t2.micro",
+    "aws_region": "eu-west-1",
+    "aws_secret_key": "",
+    "aws_source_ami": "ami-bb9a6bc2",
+    "aws_ssh_username": "ec2-user",
+    "aws_subnet_id": "subnet-06621e5d",
+    "aws_vpc_id": "vpc-78050c1f",
     "cpus": "2",
+    "disk_size": "81920",
+    "headless": "true",
+    "is_ssd": "true",
+    "iso_checksum": "5e4ecb86fd8619641f1d58f96e8561ec",
+    "iso_checksum_type": "md5",
+    "iso_url": "http://download.microsoft.com/download/B/9/9/B999286E-0A47-406D-8B3D-5B5AD7373A4A/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_ENTERPRISE_EVAL_EN-US-IRM_CENA_X64FREE_EN-US_DV5.ISO",
     "memory_size": "2048",
-    "disk_size": "61440"
+    "vm_name": "win81"
   }
 }

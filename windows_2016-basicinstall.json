@@ -19,6 +19,7 @@
       "disk_size": "{{user `disk_size`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
+        "./scripts/powershell/setup-proxy.ps1",
         "./scripts/batch/microsoft-updates.bat",
         "./scripts/powershell/install-openssh.ps1"
       ],
@@ -27,17 +28,17 @@
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
-      "output_directory": "./output-vb-{{ user `vm_name` }}/",
+      "output_directory": "./output-f-{{ user `vm_name` }}-base/",
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
       "ssh_password": "vagrant",
       "ssh_username": "vagrant",
-      "ssh_wait_timeout": "2h",
+      "ssh_wait_timeout": "6h",
       "tools_upload_flavor": "windows",
       "type": "vmware-iso",
+      "vm_name": "{{ user `vm_name` }}-base",
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
         "RemoteDisplay.vnc.port": "5900",
-        "firmware": "efi",
         "memsize": "{{user `memory_size`}}",
         "numvcpus": "{{user `cpus`}}",
         "scsi0.virtualDev": "lsisas1068"
@@ -50,21 +51,23 @@
       "disk_size": "{{user `disk_size`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
+        "./scripts/powershell/setup-proxy.ps1",
         "./scripts/batch/microsoft-updates.bat",
         "./scripts/powershell/install-openssh.ps1"
       ],
-      "guest_os_type": "Windows10_64",
+      "guest_additions_mode": "attach",
+      "guest_os_type": "Windows2016_64",
       "hard_drive_interface": "sata",
-      "hard_drive_nonrotational": "{{user `is_ssd`}}",
+      "hard_drive_nonrotational": "true",
       "headless": "{{user `headless`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_url": "{{user `iso_url`}}",
-      "output_directory": "./output-f-{{ user `vm_name` }}/",
+      "output_directory": "./output-vb-{{ user `vm_name` }}-base/",
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
       "ssh_password": "vagrant",
       "ssh_username": "vagrant",
-      "ssh_wait_timeout": "2h",
+      "ssh_wait_timeout": "6h",
       "type": "virtualbox-iso",
       "vboxmanage": [
         [
@@ -109,45 +112,55 @@
           "--cpus",
           "{{user `cpus`}}"
         ]
-      ]
-    }
-  ],
-  "post-processors": [
-    {
-      "inline": [
-        "ovftool --acceptAllEulas --compress=9 --overwrite  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
       ],
-      "only": [
-        "vmware-iso"
-      ],
-      "type": "shell-local"
-    },
-    {
-      "inline": [
-        "rm -rf ./output-f-{{ user `vm_name` }}/"
-      ],
-      "only": [
-        "vmware-iso"
-      ],
-      "type": "shell-local"
+      "vm_name": "{{ user `vm_name` }}-base"
     }
   ],
   "provisioners": [
     {
-      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
-      "remote_path": "/tmp/script.bat",
-      "scripts": [
-        "./scripts/batch/setup-vm-guesttools.bat",
-        "./scripts/batch/vagrant-ssh.bat",
-        "./scripts/batch/enable-rdp.bat",
-        "./scripts/batch/compile-dotnet-assemblies.bat",
-        "./scripts/batch/compact.bat"
+      "inline": [
+        "$env:chocolateyUseWindowsCompression = 'false'",
+        "iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex"
       ],
-      "type": "shell"
+      "type": "powershell"
+    },
+    {
+      "script": "scripts/powershell/install-oracle_guest_additions.ps1",
+      "type": "powershell"
+    },
+    {
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_timeout": "20m",
+      "type": "windows-restart"
+    },
+    {
+      "scripts": [
+        "./scripts/powershell/install-WindowsUpdates.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_timeout": "20m",
+      "type": "windows-restart"
+    },
+    {
+      "scripts": [
+        "./scripts/powershell/install-WindowsUpdates.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "restart_check_command": "powershell -command \"& {if ((get-content C:\\ProgramData\\lastboot.txt) -eq (Get-WmiObject win32_operatingsystem).LastBootUpTime) {Write-Output 'Sleeping for 600 seconds to wait for reboot'; start-sleep 600} else {Write-Output 'Reboot completed. Guest restarted.'}}\"",
+      "restart_command": "powershell \"& {(Get-WmiObject win32_operatingsystem).LastBootUpTime > C:\\ProgramData\\lastboot.txt; Restart-Computer -force}\"",
+      "restart_timeout": "20m",
+      "type": "windows-restart"
     }
   ],
   "variables": {
-    "autounattend": "./answer_files/10/Autounattend.xml",
+    "autounattend": "./answer_files/2016/Autounattend.xml",
     "aws_access_key": "",
     "aws_instance_type": "t2.micro",
     "aws_region": "eu-west-1",
@@ -156,14 +169,14 @@
     "aws_ssh_username": "ec2-user",
     "aws_subnet_id": "subnet-06621e5d",
     "aws_vpc_id": "vpc-78050c1f",
-    "cpus": "2",
+    "cpus": "4",
     "disk_size": "81920",
     "headless": "true",
     "is_ssd": "true",
-    "iso_checksum": "56ab095075be28a90bc0b510835280975c6bb2ce",
-    "iso_checksum_type": "sha1",
-    "iso_url": "http://care.dlservice.microsoft.com/dl/download/C/3/9/C399EEA8-135D-4207-92C9-6AAB3259F6EF/10240.16384.150709-1700.TH1_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
+    "iso_checksum": "70721288bbcdfe3239d8f8c0fae55f1f",
+    "iso_checksum_type": "md5",
+    "iso_url": "http://care.dlservice.microsoft.com/dl/download/1/4/9/149D5452-9B29-4274-B6B3-5361DBDA30BC/14393.0.161119-1705.RS1_REFRESH_SERVER_EVAL_X64FRE_EN-US.ISO",
     "memory_size": "4096",
-    "vm_name":"win10"
+    "vm_name": "win2016"
   }
 }

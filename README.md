@@ -10,18 +10,19 @@ This repo began by borrowing bits from the VeeWee Windows templates (https://git
 
 [Packer](https://github.com/mitchellh/packer/blob/master/CHANGELOG.md) `0.5.1` or greater is required.
 
-### Windows Versions
+### Operating Systems versions
 
-The following Windows versions are known to work (built with VMware Fusion 6.0.4 and VirtualBox 4.3.12):
+The following Windows versions are known to work (built with VMware Fusion and VirtualBox):
 
+ * Fedora 26 Server
+ * Fedora 26 Desktop 
+ * Fedora 27 Server
+ * Fedora 27 Desktop 
  * Windows 2012 R2
- * Windows 2012 R2 Core
- * Windows 2012
+ * Windows 2016
  * Windows 2008 R2
- * Windows 2008 R2 Core
  * Windows 10
- * Windows 8.1
- * Windows 7
+ 
 
 ### Windows Editions
 
@@ -88,15 +89,9 @@ It's worth mentioning that many Chef cookbooks will not work properly through Cy
 
 It's currently recommended that you add a second step to your pipeline and use Vagrant to install your packages through Chef.
 
-### Using .box Files With Vagrant
-
-The generated box files include a Vagrantfile template that is suitable for
-use with Vagrant 1.6.2+, which includes native support for Windows and uses
-WinRM to communicate with the box.
-
 ### Getting Started
 
-Trial versions of Windows 2008 R2 / 2012 / 2012 R2 / 2016 are used by default. These images can be used for 180 days without activation.
+Trial versions of Windows 2012 R2 / 2016 are used by default. These images can be used for 180 days without activation.
 
 Alternatively – if you have access to [MSDN](http://msdn.microsoft.com) or [TechNet](http://technet.microsoft.com/) – you can download retail or volume license ISO images and place them in the `iso` directory. If you do, you should supply appropriate values for `iso_url` (e.g. `./iso/<path to your iso>.iso`) and `iso_checksum` (e.g. `<the md5 of your iso>`) to the Packer command. For example, to use the Windows 2008 R2 (With SP1) retail ISO:
 
