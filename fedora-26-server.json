@@ -1,0 +1,13 @@
+{
+  "_comment": "Build with `packer build -var-file=fedora26-server.json fedora.json`",
+  "cpus": "1",
+  "disk_size": "65536",
+  "http_directory": "http/fedora/26-server/",
+  "iso_checksum": "fad18a43b9cec152fc8a1fd368950eaf59be66b1a15438149a0c3a509c56cf2f",
+  "iso_checksum_type": "sha256",
+  "iso_name": "Fedora-Server-dvd-x86_64-26-1.5.iso",
+  "iso_url": "https://download.fedoraproject.org/pub/fedora/linux/releases/26/Server/x86_64/iso/Fedora-Server-dvd-x86_64-26-1.5.iso",
+  "kickstart": "ks.cfg",
+  "memory": "2048",
+  "vm_name": "fedora26-server"
+}

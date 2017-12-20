@@ -95,17 +95,6 @@
       "expect_disconnect": "true"
     }
   ],
-  "post-processors": [
-    {
-      "type": "shell-local",
-      "only": [
-        "vmware-iso"
-      ],
-      "inline": [
-        "ovftool --acceptAllEulas --compress=9  ./output-f-{{ user `vm_name` }}-base/{{user `vm_name`}}.vmx {{user `vm_name`}}.ova"
-      ]
-    }
-  ],
   "variables": {
     "ftp_proxy": "{{env `ftp_proxy`}}",
     "headless": "true",

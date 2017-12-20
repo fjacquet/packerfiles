@@ -121,14 +121,6 @@
       ]
     }
   ],
-  "post-processors": [
-    {
-      "type": "vagrant",
-      "keep_input_artifact": false,
-      "output": "windows_2008_r2_core_{{.Provider}}.box",
-      "vagrantfile_template": "vagrantfile-windows_2008_r2.template"
-    }
-  ],
   "variables": {
     "iso_url": "http://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso",
     "iso_checksum_type": "md5",

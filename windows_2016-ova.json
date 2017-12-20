@@ -167,17 +167,6 @@
       ]
     }
   ],
-  "post-processors": [
-    {
-      "type": "shell-local",
-      "only": [
-        "vmware-iso"
-      ],
-      "inline": [
-        "ovftool --acceptAllEulas --compress=9  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
-      ]
-    }
-  ],
   "variables": {
     "iso_url": "http://care.dlservice.microsoft.com/dl/download/1/4/9/149D5452-9B29-4274-B6B3-5361DBDA30BC/14393.0.161119-1705.RS1_REFRESH_SERVER_EVAL_X64FRE_EN-US.ISO",
     "iso_checksum_type": "md5",

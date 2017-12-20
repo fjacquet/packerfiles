@@ -193,26 +193,6 @@
       ]
     }
   ],
-  "post-processors": [
-    {
-      "type": "shell-local",
-      "only": [
-        "vmware-iso"
-      ],
-      "inline": [
-        "ovftool --acceptAllEulas --compress=9 --overwrite  ./output-f-{{ user `vm_name` }}/{{ user `vm_name` }}.vmx {{user `vm_name`}}.ova"
-      ]
-    },
-    {
-      "type": "shell-local",
-      "only": [
-        "vmware-iso"
-      ],
-      "inline": [
-        "rm -rf ./output-f-{{ user `vm_name` }}/"
-      ]
-    }
-  ],
   "variables": {
     "iso_url": "http://download.microsoft.com/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.ISO",
     "iso_checksum_type": "md5",
