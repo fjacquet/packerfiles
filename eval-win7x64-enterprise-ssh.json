@@ -1,172 +1,33 @@
 {
-  "builders": [
-    {
-      "disk_size": "{{user `disk_size`}}",
-      "floppy_files": [
-        "floppy/win7x64-enterprise/Autounattend.xml",
-        "floppy/00-run-all-scripts.cmd",
-        "floppy/install-winrm.cmd",
-        "floppy/fixnetwork.ps1",
-        "floppy/powerconfig.bat",
-        "floppy/01-install-wget.cmd",
-        "floppy/_download.cmd",
-        "floppy/_packer_config.cmd",
-        "floppy/passwordchange.bat",
-        "floppy/networkprompt.bat",
-        "floppy/disablewinupdate.bat",
-        "floppy/openssh.bat",
-        "floppy/upgrade-wua.bat",
-        "floppy/zz-start-transports.cmd"
-      ],
-      "guest_os_type": "windows7-64",
-      "headless": "{{ user `headless` }}",
-      "iso_checksum": "{{ user `iso_checksum` }}",
-      "iso_checksum_type": "sha1",
-      "iso_url": "{{ user `iso_url` }}",
-      "shutdown_command": "{{ user `shutdown_command`}}",
-      "ssh_password": "vagrant",
-      "ssh_username": "vagrant",
-      "ssh_wait_timeout": "10000s",
-      "tools_upload_flavor": "windows",
-      "type": "vmware-iso",
-      "vm_name": "eval-win7x64-enterprise-ssh",
-      "vmx_data": {
-        "cpuid.coresPerSocket": "1",
-        "memsize": "3072",
-        "numvcpus": "2"
-      }
-    },
-    {
-      "disk_size": "{{user `disk_size`}}",
-      "floppy_files": [
-        "floppy/win7x64-enterprise/Autounattend.xml",
-        "floppy/00-run-all-scripts.cmd",
-        "floppy/install-winrm.cmd",
-        "floppy/fixnetwork.ps1",
-        "floppy/powerconfig.bat",
-        "floppy/01-install-wget.cmd",
-        "floppy/_download.cmd",
-        "floppy/_packer_config.cmd",
-        "floppy/passwordchange.bat",
-        "floppy/networkprompt.bat",
-        "floppy/disablewinupdate.bat",
-        "floppy/openssh.bat",
-        "floppy/upgrade-wua.bat",
-        "floppy/zz-start-transports.cmd",
-        "floppy/oracle-cert.cer"
-      ],
-      "guest_additions_mode": "attach",
-      "guest_os_type": "Windows7_64",
-      "hard_drive_interface": "sata",
-      "headless": "{{ user `headless` }}",
-      "iso_checksum": "{{ user `iso_checksum` }}",
-      "iso_checksum_type": "sha1",
-      "iso_url": "{{ user `iso_url` }}",
-      "shutdown_command": "{{ user `shutdown_command`}}",
-      "post_shutdown_delay": "30s",
-      "ssh_password": "vagrant",
-      "ssh_username": "vagrant",
-      "ssh_wait_timeout": "10000s",
-      "type": "virtualbox-iso",
-      "vboxmanage": [
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--memory",
-          "3072"
-        ],
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--cpus",
-          "2"
-        ]
-      ],
-      "vm_name": "eval-win7x64-enterprise-ssh"
-    },
-    {
-      "disk_size": "{{user `disk_size`}}",
-      "floppy_files": [
-        "floppy/win7x64-enterprise/Autounattend.xml",
-        "floppy/00-run-all-scripts.cmd",
-        "floppy/install-winrm.cmd",
-        "floppy/fixnetwork.ps1",
-        "floppy/powerconfig.bat",
-        "floppy/01-install-wget.cmd",
-        "floppy/_download.cmd",
-        "floppy/_packer_config.cmd",
-        "floppy/passwordchange.bat",
-        "floppy/networkprompt.bat",
-        "floppy/disablewinupdate.bat",
-        "floppy/openssh.bat",
-        "floppy/upgrade-wua.bat",
-        "floppy/zz-start-transports.cmd"
-      ],
-      "guest_os_type": "win-7",
-      "iso_checksum": "{{ user `iso_checksum` }}",
-      "iso_checksum_type": "sha1",
-      "iso_url": "{{ user `iso_url` }}",
-      "parallels_tools_flavor": "win",
-      "prlctl": [
-        [
-          "set",
-          "{{.Name}}",
-          "--memsize",
-          "3072"
-        ],
-        [
-          "set",
-          "{{.Name}}",
-          "--cpus",
-          "2"
-        ]
-      ],
-      "shutdown_command": "{{ user `shutdown_command`}}",
-      "ssh_password": "vagrant",
-      "ssh_username": "vagrant",
-      "ssh_wait_timeout": "10000s",
-      "type": "parallels-iso",
-      "vm_name": "eval-win7x64-enterprise-ssh"
-    }
-  ],
-  "provisioners": [
-    {
-      "environment_vars": [
-        "CM={{user `cm`}}",
-        "CM_VERSION={{user `cm_version`}}",
-        "UPDATE={{user `update`}}"
-      ],
-      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
-      "remote_path": "/tmp/script.bat",
-      "scripts": [
-        "scripts/batch/vagrant.bat",
-        "scripts/batch/cmtool.bat",
-        "scripts/batch/vmtool.bat",
-        "scripts/batch/clean.bat",
-        "scripts/batch/ultradefrag.bat",
-        "scripts/batch/uninstall-7zip.bat",
-        "scripts/batch/sdelete.bat"
-      ],
-      "type": "shell"
-    },
-    {
-      "inline": [
-        "rm -f /tmp/script.bat"
-      ],
-      "type": "shell"
-    }
-  ],
   "variables": {
-    "cm": "chef",
-    "cm_version": "",
-    "disk_size": "40960",
-    "headless": "false",
-    "iso_checksum": "15ddabafa72071a06d5213b486a02d5b55cb7070",
-    "iso_url": "http://care.dlservice.microsoft.com/dl/download/evalx/win7/x64/EN/7600.16385.090713-1255_x64fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENXEVAL_EN_DVD.iso",
     "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c 'Packer Shutdown'",
-    "update": "true",
+    "cpus": "2",
+    "disk_size": "40960",
+    "guest_os_type_vmware": "windows7-64",
+    "aws_instance_type": "t2.micro",
+    "iso_checksum_type": "sha1",
+    "iso_url": "http://care.dlservice.microsoft.com/dl/download/evalx/win7/x64/EN/7600.16385.090713-1255_x64fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENXEVAL_EN_DVD.iso",
+    "aws_secret_key": "",
+    "aws_subnet_id": "subnet-06621e5d",
+    "floppy_files_vmware": "floppy/win7x64-enterprise/Autounattend.xml,floppy/00-run-all-scripts.cmd,floppy/install-winrm.cmd,floppy/fixnetwork.ps1,floppy/powerconfig.bat,floppy/01-install-wget.cmd,floppy/_download.cmd,floppy/_packer_config.cmd,floppy/passwordchange.bat,floppy/networkprompt.bat,floppy/disablewinupdate.bat,floppy/openssh.bat,floppy/upgrade-wua.bat,floppy/zz-start-transports.cmd",
+    "floppy_files_parallels": "floppy/win7x64-enterprise/Autounattend.xml,floppy/00-run-all-scripts.cmd,floppy/install-winrm.cmd,floppy/fixnetwork.ps1,floppy/powerconfig.bat,floppy/01-install-wget.cmd,floppy/_download.cmd,floppy/_packer_config.cmd,floppy/passwordchange.bat,floppy/networkprompt.bat,floppy/disablewinupdate.bat,floppy/openssh.bat,floppy/upgrade-wua.bat,floppy/zz-start-transports.cmd",
+    "iso_checksum": "15ddabafa72071a06d5213b486a02d5b55cb7070",
     "version": "0.1.0",
-    "vm_name": "eval-win7x64-enterprise-ssh"
+    "scripts_files": "scripts/batch/vagrant.bat,scripts/batch/cmtool.bat,scripts/batch/vmtool.bat,scripts/batch/clean.bat,scripts/batch/ultradefrag.bat,scripts/batch/uninstall-7zip.bat,scripts/batch/sdelete.bat",
+    "headless": "false",
+    "aws_source_ami": "ami-bb9a6bc2",
+    "cm_version": "",
+    "is_ssd": "true",
+    "aws_vpc_id": "vpc-78050c1f",
+    "memory_size": "4096",
+    "vm_name": "eval-win7x64-enterprise-ssh",
+    "aws_region": "eu-west-1",
+    "update": "true",
+    "aws_access_key": "",
+    "floppy_files_virtualbox": "floppy/win7x64-enterprise/Autounattend.xml,floppy/00-run-all-scripts.cmd,floppy/install-winrm.cmd,floppy/fixnetwork.ps1,floppy/powerconfig.bat,floppy/01-install-wget.cmd,floppy/_download.cmd,floppy/_packer_config.cmd,floppy/passwordchange.bat,floppy/networkprompt.bat,floppy/disablewinupdate.bat,floppy/openssh.bat,floppy/upgrade-wua.bat,floppy/zz-start-transports.cmd,floppy/oracle-cert.cer",
+    "guest_os_type_virtualbox": "win-7",
+    "aws_ssh_username": "ec2-user",
+    "cm": "chef",
+    "guest_os_type_parallel": "win-2016"
   }
 }
-

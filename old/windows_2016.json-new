@@ -1,0 +1,33 @@
+{
+  "variables": {
+    "shutdown_command": null,
+    "cpus": "2",
+    "disk_size": "81920",
+    "guest_os_type_vmware": "windows8srv-64",
+    "aws_instance_type": "t2.micro",
+    "iso_checksum_type": "sha1",
+    "iso_url": "http://care.dlservice.microsoft.com/dl/download/1/4/9/149D5452-9B29-4274-B6B3-5361DBDA30BC/14393.0.161119-1705.RS1_REFRESH_SERVER_EVAL_X64FRE_EN-US.ISO",
+    "aws_secret_key": "",
+    "aws_subnet_id": "subnet-06621e5d",
+    "floppy_files_vmware": "{{user `autounattend`}},./scripts/powershell/setup-proxy.ps1,./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "floppy_files_parallels": "floppy/eval-win2016-standard/Autounattend.xml,floppy/00-run-all-scripts.cmd,floppy/install-winrm.cmd,floppy/powerconfig.bat,floppy/01-install-wget.cmd,floppy/_download.cmd,floppy/_packer_config.cmd,floppy/passwordchange.bat,floppy/cygwin.bat,floppy/cygwin.sh,floppy/unzip.vbs,floppy/zz-start-transports.cmd",
+    "iso_checksum": "70721288bbcdfe3239d8f8c0fae55f1f",
+    "version": null,
+    "scripts_files": "./scripts/powershell/setup-sysprep.ps1,./scripts/powershell/disable-autologin.ps1",
+    "headless": "true",
+    "aws_source_ami": "ami-bb9a6bc2",
+    "cm_version": null,
+    "is_ssd": "true",
+    "aws_vpc_id": "vpc-78050c1f",
+    "memory_size": "4096",
+    "vm_name": "win2016",
+    "aws_region": "eu-west-1",
+    "update": null,
+    "aws_access_key": "",
+    "floppy_files_virtualbox": "{{user `autounattend`}},./scripts/powershell/setup-proxy.ps1,./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "guest_os_type_virtualbox": "Windows2016_64",
+    "aws_ssh_username": "ec2-user",
+    "cm": null,
+    "guest_os_type_parallel": "win-2016"
+  }
+}

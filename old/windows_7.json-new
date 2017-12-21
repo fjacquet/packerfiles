@@ -1,0 +1,33 @@
+{
+  "variables": {
+    "shutdown_command": null,
+    "cpus": "2",
+    "disk_size": "81920",
+    "guest_os_type_vmware": "windows7-64",
+    "aws_instance_type": "t2.micro",
+    "iso_checksum_type": "sha1",
+    "iso_url": "http://care.dlservice.microsoft.com/dl/download/evalx/win7/x64/EN/7600.16385.090713-1255_x64fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENXEVAL_EN_DVD.iso",
+    "aws_secret_key": "",
+    "aws_subnet_id": "subnet-06621e5d",
+    "floppy_files_vmware": "{{user `autounattend`}},./scripts/batch/hotfix-KB3102810.bat,./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "floppy_files_parallels": "{{user `autounattend`}},./scripts/batch/hotfix-KB3102810.bat,./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "iso_checksum": "1d0d239a252cb53e466d39e752b17c28",
+    "version": null,
+    "scripts_files": "./scripts/batch/setup-vm-guesttools.bat,./scripts/batch/vagrant-ssh.bat,./scripts/batch/enable-rdp.bat,./scripts/batch/compile-dotnet-assemblies.bat,./scripts/batch/compact.bat",
+    "headless": "true",
+    "aws_source_ami": "ami-bb9a6bc2",
+    "cm_version": null,
+    "is_ssd": "true",
+    "aws_vpc_id": "vpc-78050c1f",
+    "memory_size": "4096",
+    "vm_name": null,
+    "aws_region": "eu-west-1",
+    "update": null,
+    "aws_access_key": "",
+    "floppy_files_virtualbox": "{{user `autounattend`}},./scripts/batch/hotfix-KB3102810.bat,./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "guest_os_type_virtualbox": "win-7",
+    "aws_ssh_username": "ec2-user",
+    "cm": null,
+    "guest_os_type_parallel": "win-2016"
+  }
+}

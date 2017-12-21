@@ -1,0 +1,33 @@
+{
+  "variables": {
+    "shutdown_command": null,
+    "cpus": "2",
+    "disk_size": "81920",
+    "guest_os_type_vmware": "windows8srv-64",
+    "aws_instance_type": "t2.micro",
+    "iso_checksum_type": "sha1",
+    "iso_url": "http://download.microsoft.com/download/B/9/9/B999286E-0A47-406D-8B3D-5B5AD7373A4A/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_ENTERPRISE_EVAL_EN-US-IRM_CENA_X64FREE_EN-US_DV5.ISO",
+    "aws_secret_key": "",
+    "aws_subnet_id": "subnet-06621e5d",
+    "floppy_files_vmware": "{{user `autounattend`}},./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "floppy_files_parallels": "{{user `autounattend`}},./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "iso_checksum": "5e4ecb86fd8619641f1d58f96e8561ec",
+    "version": null,
+    "scripts_files": "./scripts/powershell/install-WindowsUpdates.ps1",
+    "headless": "true",
+    "aws_source_ami": "ami-bb9a6bc2",
+    "cm_version": null,
+    "is_ssd": "true",
+    "aws_vpc_id": "vpc-78050c1f",
+    "memory_size": "4096",
+    "vm_name": "win81",
+    "aws_region": "eu-west-1",
+    "update": null,
+    "aws_access_key": "",
+    "floppy_files_virtualbox": "{{user `autounattend`}},./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "guest_os_type_virtualbox": "win-8.1",
+    "aws_ssh_username": "ec2-user",
+    "cm": null,
+    "guest_os_type_parallel": "win-2016"
+  }
+}

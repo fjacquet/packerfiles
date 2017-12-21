@@ -159,7 +159,7 @@
                 "rm -f /cygdrive/c/Windows/Temp/script.bat"
             ],
             "type": "shell"
-        }
+        } 
     ],
     "variables": {
         "aws_access_key": "",

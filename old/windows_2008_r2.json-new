@@ -1,0 +1,33 @@
+{
+  "variables": {
+    "shutdown_command": null,
+    "cpus": "2",
+    "disk_size": "81920",
+    "guest_os_type_vmware": "windows7srv-64",
+    "aws_instance_type": "t2.micro",
+    "iso_checksum_type": "sha1",
+    "iso_url": "http://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso",
+    "aws_secret_key": "",
+    "aws_subnet_id": "subnet-06621e5d",
+    "floppy_files_vmware": "{{user `autounattend`}},./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "floppy_files_parallels": "{{user `autounattend`}},./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "iso_checksum": "4263be2cf3c59177c45085c0a7bc6ca5",
+    "version": null,
+    "scripts_files": "./scripts/batch/setup-vm-guesttools.bat,./scripts/batch/vagrant-ssh.bat,./scripts/batch/enable-rdp.bat,./scripts/batch/compact.bat",
+    "headless": "true",
+    "aws_source_ami": "ami-bb9a6bc2",
+    "cm_version": null,
+    "is_ssd": "true",
+    "aws_vpc_id": "vpc-78050c1f",
+    "memory_size": "4096",
+    "vm_name": "win2008r2",
+    "aws_region": "eu-west-1",
+    "update": null,
+    "aws_access_key": "",
+    "floppy_files_virtualbox": "{{user `autounattend`}},./scripts/batch/microsoft-updates.bat,./scripts/powershell/install-openssh.ps1",
+    "guest_os_type_virtualbox": "win-2008",
+    "aws_ssh_username": "ec2-user",
+    "cm": null,
+    "guest_os_type_parallel": "win-2016"
+  }
+}
