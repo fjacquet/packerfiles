@@ -1,5 +1,4 @@
 {
-  "variables": {
     "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c 'Packer Shutdown'",
     "cpus": "2",
     "disk_size": "40960",
@@ -30,4 +29,4 @@
     "cm": "chef",
     "guest_os_type_parallel": "win-2016"
   }
-}
+
