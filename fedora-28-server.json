@@ -1,0 +1,13 @@
+{
+    "_comment": "Build with `packer build -var-file=fedora26-server.json fedora.json`",
+    "vm_name": "fedora-28-server",
+    "cpus": "1",
+    "disk_size": "65536",
+    "http_directory": "http/fedora/28-server/",
+    "iso_checksum": "8d59a25052e05758c15fe9daa3bc472b5619791b442e752450bba7f1eeca9c1a",
+    "iso_checksum_type": "sha256",
+    "iso_name": "Fedora-Server-dvd-x86_64-28-1.1.iso",
+    "iso_url": "http://mirror.switch.ch/ftp/mirror/fedora/linux/releases/28/Server/x86_64/iso/Fedora-Server-dvd-x86_64-28-1.1.iso",
+    "kickstart": "ks.cfg",
+    "memory": "2048"
+}

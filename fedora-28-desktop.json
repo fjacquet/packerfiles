@@ -1,0 +1,13 @@
+{
+    "_comment": "Build with `packer build -var-file=fedora-28-desktop.json fedora.json`",
+    "cpus": "1",
+    "disk_size": "65536",
+    "http_directory": "http/fedora/28-desktop/",
+    "iso_checksum": "34da8b46b23d786bb1d43a77a4dcd713c446fc70a4ace0c6f52e43b086350562",
+    "iso_checksum_type": "sha256",
+    "iso_name": "Fedora-Workstation-netinst-x86_64-28-1.1.iso",
+    "iso_url": "http://mirror.switch.ch/ftp/mirror/fedora/linux/releases/28/Workstation/x86_64/iso/Fedora-Workstation-netinst-x86_64-28-1.1.iso",
+    "kickstart": "ks.cfg",
+    "memory": "2048",
+    "vm_name": "fedora-28-desktop"
+}
