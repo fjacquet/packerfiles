@@ -9,5 +9,5 @@
   "iso_url": "https://download.fedoraproject.org/pub/fedora/linux/releases/26/Server/x86_64/iso/Fedora-Server-dvd-x86_64-26-1.5.iso",
   "kickstart": "ks.cfg",
   "memory": "2048",
-  "vm_name": "fedora26-server"
+  "vm_name": "fedora-26-server"
 }
