@@ -1,0 +1,31 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  identity:
+    hostname: vagrant
+    username: vagrant
+    password: "$6$rounds=4096$aQ0/YyKXOuMBwUNa$0jBVD5czNIMe7SijuGPOeBwBfJHy/G4F3FqYHoOBiUWuBmQcFl2kBXNGYkGhOcUFoJf5.dOGlLB0j1T9LyTL0"
+  ssh:
+    install-server: true
+    allow-pw: true
+  storage:
+    layout:
+      name: lvm
+      sizing-policy: all
+  packages:
+    - openssh-server
+    - open-vm-tools
+    - curl
+    - ntp
+    - nfs-common
+    - build-essential
+    - perl
+    - dkms
+    - linux-headers-generic
+  late-commands:
+    - echo 'vagrant ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/vagrant
+    - chmod 440 /target/etc/sudoers.d/vagrant
+    - sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication yes/' /target/etc/ssh/sshd_config
