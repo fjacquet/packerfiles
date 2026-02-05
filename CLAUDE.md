@@ -13,26 +13,31 @@ Requires Packer 1.7+ with HCL2 support. Currently validated with Packer 1.15.0.
 All commands must be run from the repository root.
 
 Initialize plugins (one-time per OS):
+
 ```bash
 packer init templates/ubuntu/
 ```
 
 Validate a template:
+
 ```bash
 packer validate -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl templates/ubuntu/
 ```
 
 Build an image:
+
 ```bash
 packer build -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl templates/ubuntu/
 ```
 
 Build for a specific builder:
+
 ```bash
 packer build -only='vmware-iso.ubuntu' -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl templates/ubuntu/
 ```
 
 Using the Makefile:
+
 ```bash
 make validate OS=ubuntu VARIANT=ubuntu-2204-server
 make build OS=ubuntu VARIANT=ubuntu-2204-server
@@ -45,6 +50,7 @@ make validate-all
 ### Template Pattern (Two-Part System)
 
 **Template directories** (`templates/<os>/`) contain 4 HCL2 files:
+
 - `plugins.pkr.hcl` - `required_plugins` block
 - `variables.pkr.hcl` - Variable declarations with types and defaults
 - `sources.pkr.hcl` - Source blocks for each hypervisor (vmware-iso, virtualbox-iso, parallels-iso)
@@ -53,6 +59,7 @@ make validate-all
 Windows also has `locals.pkr.hcl` for dynamic floppy file list construction.
 
 **Variant files** (`vars/<os>/*.pkrvars.hcl`) override variables per OS version:
+
 - ISO URL and checksum (algorithm prefix in value, e.g. `"sha256:abc..."`)
 - VM name, memory, CPUs
 - Guest OS type per hypervisor
@@ -76,6 +83,7 @@ Windows also has `locals.pkr.hcl` for dynamic floppy file list construction.
 **Linux** runs shell scripts in order: update -> desktop (optional) -> vagrant user setup -> sshd -> hypervisor tools (vmware/virtualbox/parallels) -> motd -> minimize -> cleanup
 
 **Windows** uses a two-phase approach:
+
 1. Floppy-based scripts during install (Autounattend.xml triggers `00-run-all-scripts.cmd` which runs wget install, Cygwin/OpenSSH setup, WinRM)
 2. Post-install batch provisioners (vagrant user, config management tools, VM tools, cleanup, defrag, sdelete)
 

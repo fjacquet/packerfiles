@@ -103,6 +103,7 @@ Windows 11 includes TPM/SecureBoot/RAM bypass registry keys for VM compatibility
 ## BSD Notes
 
 BSD templates handle per-hypervisor differences in disk device naming through separate source blocks with appropriate boot commands:
+
 - FreeBSD: `da0` (VMware/VBox), `ada0` (Parallels)
 - NetBSD: `sd0` (VMware), `wd0` (VBox/Parallels)
 - DragonFlyBSD: `da0` (VMware/VBox), `ad0` (Parallels)

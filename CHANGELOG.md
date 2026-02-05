@@ -1,4 +1,45 @@
-## Unreleased
+## v2.0.0 (2025)
+
+### Breaking Changes
+
+* **Full HCL2 migration** - All templates converted from JSON to HCL2 format
+* Legacy JSON templates archived in `archive/json-legacy/`
+* EOL OS templates (Windows 2008 R2, 7, CentOS 6, etc.) archived in `archive/eol/`
+* Directory structure reorganized: `templates/<os>/` and `vars/<os>/`
+
+### Added
+
+* HCL2 templates for 11 OS families: Ubuntu, Debian, CentOS, Fedora, Oracle Linux, FreeBSD, OpenBSD, NetBSD, DragonFlyBSD, Windows, ESXi
+* Windows Server 2025 Standard evaluation support
+* Windows 11 Enterprise evaluation support (with TPM/SecureBoot bypass)
+* Ubuntu 24.04 LTS and 22.04 LTS variants
+* Fedora 40 and 41 variants
+* Debian 12 (Bookworm) variant
+* Oracle Linux 8.10 and 9.7 variants
+* FreeBSD 14.2, OpenBSD 7.6, NetBSD 10.1, DragonFlyBSD 6.4.2 variants
+* Makefile with `validate`, `build`, `build-only`, `init-all`, `validate-all` targets
+* Kickstart configs for Fedora 40/41 and Oracle Linux 8/9
+* Preseed config for Debian 12 (Bookworm)
+
+### Fixed
+
+* Removed deprecated `--force-yes` from apt-get (ubuntu, debian)
+* Updated Cygwin OpenSSH from 7.1/7.2 to 10.0p1
+* Updated Chocolatey install URL to `community.chocolatey.org`
+* Added missing shebangs to ESXi and Oracle Linux scripts
+* Replaced deprecated `service`/`chkconfig` with `systemctl` (centos, oracle)
+* Fixed VMware hardware version minimum (13) for ESXi template
+* Fixed `tools_upload_flavor` for BSD (must be `linux`, not `freebsd`)
+
+### Archived
+
+* 14 orphaned floppy scripts moved to `archive/orphaned-floppy/`
+* Win2008 R2 Standard Core Autounattend.xml moved to archive
+
+---
+
+## Unreleased (legacy)
+
 * Fixed issue with Console Output in win-updates.ps1 (#245)
 * Added Windows 2016 build (#243)
 * Use VBox certs from guest addition (#247, #250)
@@ -73,7 +114,8 @@
 ## v1.14 (May 6th, 2014)
 
 * Compact generated VMs using ultradefrag and sdelete (#53)
-* Fix 2008 R2 Core Autounattend.xml steps
+* Fix Windows 2012 R2 issue where the `vagrant` user did not have its password set
+* Fix Windows 2012 R2 issue where autologon only works once
 
 ## v1.13 (May 2nd, 2014)
 
@@ -126,13 +168,11 @@
 
 * Allow Packer to upload VMware Tools by default, but fall back to downloading the tools from VMware if required
 * Update SCSI bus type for the hard disk in a VMware VM to permit Windows 2012 R2 to install correctly
-* Fix Windows 2012 R2 issue where the `vagrant` user did not have its password set
-* Fix Windows 2012 R2 issue where autologon only works once
 
 ## v1.2 (December 18, 2013)
 
 * Add support for Windows 2012 and Windows 2012 R2
-* Switch all configurations to use Microsoft trial images that are publicly accessible so that you do not need MSDN or TechNet to use this repo
+* Switch all configurations to use Microsoft trial images
 
 ## v1.1 (December 17, 2013)
 
