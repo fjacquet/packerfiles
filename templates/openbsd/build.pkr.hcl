@@ -3,6 +3,7 @@ build {
     "source.vmware-iso.openbsd",
     "source.virtualbox-iso.openbsd",
     "source.parallels-iso.openbsd",
+    // "source.proxmox-iso.openbsd",
   ]
 
   provisioner "shell" {

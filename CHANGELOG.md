@@ -1,3 +1,28 @@
+## v2.1.0 (2025)
+
+### Added
+
+* **3 new OS families**: AlmaLinux (9.7, 10.1), Rocky Linux (9.7, 10.1), openSUSE Leap (16.0)
+* **Cloud builders** for all templates: Proxmox, Amazon EBS, Azure (commented out by default)
+* New `cloud.pkr.hcl` file per template with cloud builder variables and source blocks
+* Fedora 42 and 43 variants
+* FreeBSD 15.0 variant
+* OpenBSD 7.8 variant
+* Oracle Linux 10.1 variant
+* ESXi 8.0 variant (placeholder checksum - requires Broadcom account)
+* Kickstart configs for Fedora 42/43, Oracle Linux 10, AlmaLinux 9/10, Rocky Linux 9/10
+* Agama installer profile for openSUSE Leap 16.0
+* Provisioning scripts for openSUSE (zypper-based update, cleanup, etc.)
+
+### Archived
+
+* Ubuntu 18.04 (EOL April 2023) moved to `archive/eol/`
+* CentOS 7 (EOL June 2024) moved to `archive/eol/`
+* Fedora 40 (EOL May 2025) moved to `archive/eol/`
+* ESXi 6.5 (EOL October 2022) moved to `archive/eol/`
+
+---
+
 ## v2.0.0 (2025)
 
 ### Breaking Changes

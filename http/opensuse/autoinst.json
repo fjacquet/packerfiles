@@ -1,0 +1,55 @@
+{
+  "product": {
+    "id": "Leap"
+  },
+  "localization": {
+    "language": "en_US.UTF-8",
+    "keyboard": "us",
+    "timezone": "UTC"
+  },
+  "root": {
+    "password": "vagrant",
+    "hashedPassword": false
+  },
+  "user": {
+    "fullName": "Vagrant User",
+    "userName": "vagrant",
+    "password": "vagrant",
+    "hashedPassword": false
+  },
+  "network": {
+    "connections": [
+      {
+        "id": "eth0",
+        "interface": "eth0",
+        "method4": "auto"
+      }
+    ]
+  },
+  "storage": {
+    "drives": [
+      {
+        "partitions": [
+          {
+            "filesystem": {
+              "path": "swap"
+            },
+            "size": "2 GiB"
+          },
+          {
+            "filesystem": {
+              "path": "/",
+              "type": "btrfs"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "software": {
+    "patterns": [
+      "base",
+      "enhanced_base"
+    ]
+  }
+}

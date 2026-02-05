@@ -16,5 +16,13 @@ packer {
       source  = "github.com/hashicorp/amazon"
       version = "~> 1"
     }
+    proxmox = {
+      source  = "github.com/hashicorp/proxmox"
+      version = "~> 1"
+    }
+    azure = {
+      source  = "github.com/hashicorp/azure"
+      version = "~> 2"
+    }
   }
 }

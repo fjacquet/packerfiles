@@ -9,7 +9,7 @@
 
 PACKER ?= packer
 
-# OS family (ubuntu, debian, centos, fedora, oraclelinux, freebsd, openbsd, netbsd, dragonflybsd, windows, esxi)
+# OS family (ubuntu, debian, centos, fedora, oraclelinux, almalinux, rockylinux, opensuse, freebsd, openbsd, netbsd, dragonflybsd, windows, esxi)
 OS ?=
 # Variant name without extension (e.g. ubuntu-2204-server, eval-win2022-standard-cygwin)
 VARIANT ?=
@@ -20,21 +20,23 @@ TEMPLATE_DIR = templates/$(OS)
 VAR_FILE = vars/$(OS)/$(VARIANT).pkrvars.hcl
 
 # All OS families
-ALL_OS = ubuntu debian centos fedora oraclelinux freebsd openbsd netbsd dragonflybsd windows esxi
+ALL_OS = ubuntu debian centos fedora oraclelinux almalinux rockylinux opensuse freebsd openbsd netbsd dragonflybsd windows esxi
 
 # Default variant per OS for validation
 DEFAULT_VARIANTS = \
 	ubuntu:ubuntu-2204-server \
 	debian:debian-12 \
-	centos:centos-7-server \
 	fedora:fedora-41-server \
 	oraclelinux:ol-9-server \
+	almalinux:alma-9-server \
+	rockylinux:rocky-9-server \
+	opensuse:leap-16-server \
 	freebsd:freebsd-14 \
 	openbsd:openbsd-76 \
 	netbsd:netbsd-10 \
 	dragonflybsd:dragonflybsd-64 \
 	windows:eval-win2022-standard-cygwin \
-	esxi:esxi-65
+	esxi:esxi-80
 
 .PHONY: help validate build build-only init init-all validate-all
 

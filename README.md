@@ -11,18 +11,23 @@ Packer HCL2 templates for building Vagrant-compatible VM images across multiple 
 
 | OS Family | Variants | Builders |
 |-----------|----------|----------|
-| Ubuntu | 18.04, 22.04 LTS, 24.04 LTS | VMware, VirtualBox, Parallels |
-| Debian | 11 (Bullseye), 12 (Bookworm) | VMware, VirtualBox, Parallels |
-| CentOS | 7 | VMware, VirtualBox, Parallels |
-| Fedora | 40, 41 | VMware, VirtualBox, Parallels |
-| Oracle Linux | 8.10, 9.7 | VMware, VirtualBox, Parallels |
-| FreeBSD | 14.2 | VMware, VirtualBox, Parallels |
-| OpenBSD | 7.6 | VMware, VirtualBox, Parallels |
-| NetBSD | 10.1 | VMware, VirtualBox, Parallels |
-| DragonFlyBSD | 6.4.2 | VMware, VirtualBox, Parallels |
-| Windows Server | 2016, 2022, 2025 | VMware, VirtualBox, Parallels |
-| Windows Desktop | 11 Enterprise | VMware, VirtualBox, Parallels |
-| VMware ESXi | 6.5 | VMware only |
+| Ubuntu | 22.04 LTS, 24.04 LTS | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| Debian | 11 (Bullseye), 12 (Bookworm) | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| CentOS | (template only, no active variants) | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| Fedora | 41, 42, 43 | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| Oracle Linux | 8.10, 9.7, 10.1 | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| AlmaLinux | 9.7, 10.1 | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| Rocky Linux | 9.7, 10.1 | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| openSUSE Leap | 16.0 | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| FreeBSD | 14.2, 15.0 | VMware, VirtualBox, Parallels, Proxmox* |
+| OpenBSD | 7.6, 7.8 | VMware, VirtualBox, Parallels, Proxmox* |
+| NetBSD | 10.1 | VMware, VirtualBox, Parallels, Proxmox* |
+| DragonFlyBSD | 6.4.2 | VMware, VirtualBox, Parallels, Proxmox* |
+| Windows Server | 2016, 2022, 2025 | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| Windows Desktop | 11 Enterprise | VMware, VirtualBox, Parallels, Proxmox*, AWS*, Azure* |
+| VMware ESXi | 8.0 | VMware, Proxmox* |
+
+\* Cloud builders (Proxmox, AWS, Azure) are defined but commented out by default. Uncomment in `build.pkr.hcl` and provide credentials to use.
 
 ## Quick Start
 
@@ -58,11 +63,14 @@ make init-all        # Initialize all plugins
 ```
 packerfiles/
 ├── templates/          # HCL2 Packer templates (one directory per OS family)
-│   ├── ubuntu/         #   plugins.pkr.hcl, variables.pkr.hcl, sources.pkr.hcl, build.pkr.hcl
+│   ├── ubuntu/         #   plugins, variables, sources, build, cloud .pkr.hcl
 │   ├── debian/
 │   ├── centos/
 │   ├── fedora/
 │   ├── oraclelinux/
+│   ├── almalinux/
+│   ├── rockylinux/
+│   ├── opensuse/
 │   ├── freebsd/
 │   ├── openbsd/
 │   ├── netbsd/
@@ -83,12 +91,13 @@ packerfiles/
 
 ### Template Pattern
 
-Each OS family has 4 HCL2 files in `templates/<os>/`:
+Each OS family has 5 HCL2 files in `templates/<os>/`:
 
-- **plugins.pkr.hcl** - Required Packer plugins (vmware, virtualbox, parallels)
+- **plugins.pkr.hcl** - Required Packer plugins (vmware, virtualbox, parallels, proxmox, amazon, azure)
 - **variables.pkr.hcl** - Variable declarations with types and defaults
-- **sources.pkr.hcl** - Source blocks for each hypervisor builder
-- **build.pkr.hcl** - Build block with provisioners
+- **sources.pkr.hcl** - Source blocks for local hypervisor builders
+- **build.pkr.hcl** - Build block with provisioners (cloud sources commented out by default)
+- **cloud.pkr.hcl** - Cloud builder variables and source blocks (Proxmox, AWS, Azure)
 
 Variant files in `vars/<os>/` override variables (ISO URL, checksum, VM name, etc.) and are passed via `-var-file=`.
 

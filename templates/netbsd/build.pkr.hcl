@@ -3,6 +3,7 @@ build {
     "source.vmware-iso.netbsd",
     "source.virtualbox-iso.netbsd",
     "source.parallels-iso.netbsd",
+    // "source.proxmox-iso.netbsd",
   ]
 
   provisioner "shell" {

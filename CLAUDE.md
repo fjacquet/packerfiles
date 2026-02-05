@@ -1,10 +1,11 @@
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-Collection of HashiCorp Packer HCL2 templates for building Vagrant-compatible VM images across 11 OS families and 3 hypervisors (VMware, VirtualBox, Parallels). Windows also supports Amazon EBS (currently disabled in build). Legacy JSON templates are archived in `archive/json-legacy/`.
+Collection of HashiCorp Packer HCL2 templates for building Vagrant-compatible VM images across 14 OS families and 6 builders (VMware, VirtualBox, Parallels, Proxmox, Amazon EBS, Azure). Cloud builders are commented out by default and require credentials to enable. Legacy JSON templates are archived in `archive/json-legacy/`.
 
 Requires Packer 1.7+ with HCL2 support. Currently validated with Packer 1.15.0.
 
@@ -49,12 +50,13 @@ make validate-all
 
 ### Template Pattern (Two-Part System)
 
-**Template directories** (`templates/<os>/`) contain 4 HCL2 files:
+**Template directories** (`templates/<os>/`) contain 5 HCL2 files:
 
 - `plugins.pkr.hcl` - `required_plugins` block
 - `variables.pkr.hcl` - Variable declarations with types and defaults
-- `sources.pkr.hcl` - Source blocks for each hypervisor (vmware-iso, virtualbox-iso, parallels-iso)
-- `build.pkr.hcl` - Build block with provisioners
+- `sources.pkr.hcl` - Source blocks for local hypervisors (vmware-iso, virtualbox-iso, parallels-iso)
+- `build.pkr.hcl` - Build block with provisioners (cloud sources commented out by default)
+- `cloud.pkr.hcl` - Cloud builder variables and source blocks (Proxmox, AWS, Azure)
 
 Windows also has `locals.pkr.hcl` for dynamic floppy file list construction.
 
@@ -67,9 +69,9 @@ Windows also has `locals.pkr.hcl` for dynamic floppy file list construction.
 
 ### Directory Layout
 
-- `templates/` - HCL2 Packer templates (11 OS families)
+- `templates/` - HCL2 Packer templates (14 OS families)
 - `vars/` - Variable value files (.pkrvars.hcl), organized by OS family
-- `http/` - Preseed (Debian/Ubuntu), Kickstart (CentOS/Fedora/Oracle), autoinstall configs
+- `http/` - Preseed (Debian/Ubuntu), Kickstart (CentOS/Fedora/Oracle/AlmaLinux/Rocky), Agama (openSUSE), autoinstall configs
 - `floppy/` - Windows install-time scripts and per-edition Autounattend.xml
 - `scripts/bash/<distro>/` - Linux provisioning scripts
 - `scripts/batch/` - Windows batch provisioning scripts

@@ -1,8 +1,13 @@
 build {
+  // To use cloud builders, uncomment the desired source and provide
+  // the required credentials in your .pkrvars.hcl file.
   sources = [
     "source.vmware-iso.ubuntu",
     "source.virtualbox-iso.ubuntu",
     "source.parallels-iso.ubuntu",
+    // "source.proxmox-iso.ubuntu",
+    // "source.amazon-ebs.ubuntu",
+    // "source.azure-arm.ubuntu",
   ]
 
   provisioner "shell" {

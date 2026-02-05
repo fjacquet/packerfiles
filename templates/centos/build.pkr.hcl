@@ -1,8 +1,13 @@
 build {
+  // To use cloud builders, uncomment the desired source and provide
+  // the required credentials in your .pkrvars.hcl file.
   sources = [
     "source.vmware-iso.centos",
     "source.virtualbox-iso.centos",
     "source.parallels-iso.centos",
+    // "source.proxmox-iso.centos",
+    // "source.amazon-ebs.centos",
+    // "source.azure-arm.centos",
   ]
 
   # Phase 1: Update (may trigger reboot)

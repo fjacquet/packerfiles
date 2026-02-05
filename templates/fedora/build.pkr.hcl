@@ -1,8 +1,13 @@
 build {
+  // To use cloud builders, uncomment the desired source and provide
+  // the required credentials in your .pkrvars.hcl file.
   sources = [
     "source.vmware-iso.fedora",
     "source.virtualbox-iso.fedora",
     "source.parallels-iso.fedora",
+    // "source.proxmox-iso.fedora",
+    // "source.amazon-ebs.fedora",
+    // "source.azure-arm.fedora",
   ]
 
   provisioner "shell" {

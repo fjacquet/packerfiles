@@ -6,6 +6,8 @@ build {
     "source.virtualbox-iso.windows",
     "source.parallels-iso.windows",
     // "source.amazon-ebs.windows",
+    // "source.proxmox-iso.windows",
+    // "source.azure-arm.windows",
   ]
 
   provisioner "shell" {

@@ -1,8 +1,13 @@
 build {
+  // To use cloud builders, uncomment the desired source and provide
+  // the required credentials in your .pkrvars.hcl file.
   sources = [
     "source.vmware-iso.debian",
     "source.virtualbox-iso.debian",
     "source.parallels-iso.debian",
+    // "source.proxmox-iso.debian",
+    // "source.amazon-ebs.debian",
+    // "source.azure-arm.debian",
   ]
 
   provisioner "shell" {

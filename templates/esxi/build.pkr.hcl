@@ -1,6 +1,7 @@
 build {
   sources = [
     "source.vmware-iso.esxi",
+    // "source.proxmox-iso.esxi",
   ]
 
   provisioner "file" {

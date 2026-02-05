@@ -3,6 +3,7 @@ build {
     "source.vmware-iso.freebsd",
     "source.virtualbox-iso.freebsd",
     "source.parallels-iso.freebsd",
+    // "source.proxmox-iso.freebsd",
   ]
 
   provisioner "shell" {

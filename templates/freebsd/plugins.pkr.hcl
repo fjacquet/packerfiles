@@ -12,5 +12,9 @@ packer {
       source  = "github.com/Parallels/parallels"
       version = "~> 1"
     }
+    proxmox = {
+      source  = "github.com/hashicorp/proxmox"
+      version = "~> 1"
+    }
   }
 }

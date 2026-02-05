@@ -3,6 +3,7 @@ build {
     "source.vmware-iso.dragonflybsd",
     "source.virtualbox-iso.dragonflybsd",
     "source.parallels-iso.dragonflybsd",
+    // "source.proxmox-iso.dragonflybsd",
   ]
 
   provisioner "shell" {

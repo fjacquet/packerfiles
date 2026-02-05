@@ -1,8 +1,13 @@
 build {
+  // To use cloud builders, uncomment the desired source and provide
+  // the required credentials in your .pkrvars.hcl file.
   sources = [
     "source.vmware-iso.oraclelinux",
     "source.virtualbox-iso.oraclelinux",
     "source.parallels-iso.oraclelinux",
+    // "source.proxmox-iso.oraclelinux",
+    // "source.amazon-ebs.oraclelinux",
+    // "source.azure-arm.oraclelinux",
   ]
 
   provisioner "shell" {
