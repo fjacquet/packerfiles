@@ -10,6 +10,11 @@ build {
     // "source.azure-arm.oraclelinux",
   ]
 
+  provisioner "file" {
+    source      = "scripts/bash/common/vagrant.pub"
+    destination = "/tmp/vagrant.pub"
+  }
+
   provisioner "shell" {
     environment_vars = [
       "DESKTOP=${var.desktop}",

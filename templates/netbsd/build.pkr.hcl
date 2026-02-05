@@ -6,6 +6,11 @@ build {
     // "source.proxmox-iso.netbsd",
   ]
 
+  provisioner "file" {
+    source      = "scripts/bash/common/vagrant.pub"
+    destination = "/tmp/vagrant.pub"
+  }
+
   provisioner "shell" {
     environment_vars = [
       "NETBSD_MIRROR=${var.netbsd_mirror}",

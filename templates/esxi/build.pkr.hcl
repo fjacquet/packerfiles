@@ -5,7 +5,7 @@ build {
   ]
 
   provisioner "file" {
-    source      = "scripts/bash/esxi/vagrant.pub"
+    source      = "scripts/bash/common/vagrant.pub"
     destination = "/etc/ssh/keys-root/authorized_keys"
   }
 

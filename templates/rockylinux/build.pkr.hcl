@@ -10,6 +10,11 @@ build {
     // "source.azure-arm.rockylinux",
   ]
 
+  provisioner "file" {
+    source      = "scripts/bash/common/vagrant.pub"
+    destination = "/tmp/vagrant.pub"
+  }
+
   # Phase 1: Update (may trigger reboot)
   provisioner "shell" {
     environment_vars = [

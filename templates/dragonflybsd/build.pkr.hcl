@@ -6,6 +6,11 @@ build {
     // "source.proxmox-iso.dragonflybsd",
   ]
 
+  provisioner "file" {
+    source      = "scripts/bash/common/vagrant.pub"
+    destination = "/tmp/vagrant.pub"
+  }
+
   provisioner "shell" {
     environment_vars = [
       "HOSTNAME=${var.vm_name}",
