@@ -1,129 +1,138 @@
-# Windows Templates for Packer
+# Packerfiles - HCL2 VM Image Builder
 
-### Introduction
+Packer HCL2 templates for building Vagrant-compatible VM images across multiple operating systems and hypervisors.
 
-This repository contains Windows templates that can be used to create boxes for Vagrant using Packer ([Website](http://www.packer.io)) ([Github](http://github.com/mitchellh/packer)).
+## Requirements
 
-This repo began by borrowing bits from the VeeWee Windows templates (https://github.com/jedi4ever/veewee/tree/master/templates). Modifications were made to work with Packer and the VMware Fusion / VirtualBox providers for Packer and Vagrant.
+- [Packer](https://www.packer.io/) 1.7+ (HCL2 support required)
+- At least one hypervisor: [VMware Fusion/Workstation](https://www.vmware.com/), [VirtualBox](https://www.virtualbox.org/), or [Parallels Desktop](https://www.parallels.com/)
 
-### Packer Version
+## Supported Operating Systems
 
-[Packer](https://github.com/mitchellh/packer/blob/master/CHANGELOG.md) `0.5.1` or greater is required.
+| OS Family | Variants | Builders |
+|-----------|----------|----------|
+| Ubuntu | 18.04, 22.04 LTS, 24.04 LTS | VMware, VirtualBox, Parallels |
+| Debian | 11 (Bullseye), 12 (Bookworm) | VMware, VirtualBox, Parallels |
+| CentOS | 7 | VMware, VirtualBox, Parallels |
+| Fedora | 40, 41 | VMware, VirtualBox, Parallels |
+| Oracle Linux | 8.10, 9.7 | VMware, VirtualBox, Parallels |
+| FreeBSD | 14.2 | VMware, VirtualBox, Parallels |
+| OpenBSD | 7.6 | VMware, VirtualBox, Parallels |
+| NetBSD | 10.1 | VMware, VirtualBox, Parallels |
+| DragonFlyBSD | 6.4.2 | VMware, VirtualBox, Parallels |
+| Windows Server | 2016, 2022, 2025 | VMware, VirtualBox, Parallels |
+| Windows Desktop | 11 Enterprise | VMware, VirtualBox, Parallels |
+| VMware ESXi | 6.5 | VMware only |
 
-### Operating Systems versions
+## Quick Start
 
-The following Windows versions are known to work (built with VMware Fusion and VirtualBox):
+All commands must be run from the repository root.
 
- * Fedora 26 Server
- * Fedora 26 Desktop 
- * Fedora 27 Server
- * Fedora 27 Desktop 
- * Windows 2012 R2
- * Windows 2016
- * Windows 2008 R2
- * Windows 10
- 
+```bash
+# Initialize plugins (one-time)
+packer init templates/ubuntu/
 
-### Windows Editions
+# Validate a template
+packer validate -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl templates/ubuntu/
 
-All Windows Server versions are defaulted to the Server Standard edition. You can modify this by editing the Autounattend.xml file, changing the `ImageInstall`>`OSImage`>`InstallFrom`>`MetaData`>`Value` element (e.g. to Windows Server 2012 R2 SERVERDATACENTER).
+# Build an image (all builders)
+packer build -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl templates/ubuntu/
 
-### Product Keys
-
-The `Autounattend.xml` files are configured to work correctly with trial ISOs (which will be downloaded and cached for you the first time you perform a `packer build`). If you would like to use retail or volume license ISOs, you need to update the `UserData`>`ProductKey` element as follows:
-
-* Uncomment the `<Key>...</Key>` element
-* Insert your product key into the `Key` element
-
-If you are going to configure your VM as a KMS client, you can use the product keys at http://technet.microsoft.com/en-us/library/jj612867.aspx. These are the default values used in the `Key` element.
-
-### Windows Updates
-
-The scripts in this repo will install all Windows updates – by default – during Windows Setup. This is a _very_ time consuming process, depending on the age of the OS and the quantity of updates released since the last service pack. You might want to do yourself a favor during development and disable this functionality, by commenting out the `WITH WINDOWS UPDATES` section and uncommenting the `WITHOUT WINDOWS UPDATES` section in `Autounattend.xml`:
-
-```xml
-<!-- WITHOUT WINDOWS UPDATES -->
-<SynchronousCommand wcm:action="add">
-    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\openssh.ps1 -AutoStart</CommandLine>
-    <Description>Install OpenSSH</Description>
-    <Order>99</Order>
-    <RequiresUserInput>true</RequiresUserInput>
-</SynchronousCommand>
-<!-- END WITHOUT WINDOWS UPDATES -->
-<!-- WITH WINDOWS UPDATES -->
-<!--
-<SynchronousCommand wcm:action="add">
-    <CommandLine>cmd.exe /c a:\microsoft-updates.bat</CommandLine>
-    <Order>98</Order>
-    <Description>Enable Microsoft Updates</Description>
-</SynchronousCommand>
-<SynchronousCommand wcm:action="add">
-    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\openssh.ps1</CommandLine>
-    <Description>Install OpenSSH</Description>
-    <Order>99</Order>
-    <RequiresUserInput>true</RequiresUserInput>
-</SynchronousCommand>
-<SynchronousCommand wcm:action="add">
-    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\win-updates.ps1</CommandLine>
-    <Description>Install Windows Updates</Description>
-    <Order>100</Order>
-    <RequiresUserInput>true</RequiresUserInput>
-</SynchronousCommand>
--->
-<!-- END WITH WINDOWS UPDATES -->
+# Build for a specific builder only
+packer build -only='vmware-iso.ubuntu' -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl templates/ubuntu/
 ```
 
-Doing so will give you hours back in your day, which is a good thing.
+### Using the Makefile
 
-### OpenSSH / WinRM
+```bash
+make init OS=ubuntu
+make validate OS=ubuntu VARIANT=ubuntu-2204-server
+make build OS=ubuntu VARIANT=ubuntu-2204-server
+make build-only OS=ubuntu VARIANT=ubuntu-2204-server BUILDER=vmware-iso.ubuntu
+make validate-all    # Validate all templates
+make init-all        # Initialize all plugins
+```
 
-Currently, [Packer](http://packer.io) has a single communicator that uses SSH. This means we need an SSH server installed on Windows - which is not optimal as we could use WinRM to communicate with the Windows VM. In the short term, everything works well with SSH; in the medium term, work is underway on a WinRM communicator for Packer.
+## Directory Structure
 
-If you have serious objections to OpenSSH being installed, you can always add another stage to your build pipeline:
+```
+packerfiles/
+├── templates/          # HCL2 Packer templates (one directory per OS family)
+│   ├── ubuntu/         #   plugins.pkr.hcl, variables.pkr.hcl, sources.pkr.hcl, build.pkr.hcl
+│   ├── debian/
+│   ├── centos/
+│   ├── fedora/
+│   ├── oraclelinux/
+│   ├── freebsd/
+│   ├── openbsd/
+│   ├── netbsd/
+│   ├── dragonflybsd/
+│   ├── windows/        #   Also includes locals.pkr.hcl
+│   └── esxi/
+├── vars/               # Variable value files (.pkrvars.hcl)
+│   ├── ubuntu/         #   ubuntu-2204-server.pkrvars.hcl, etc.
+│   ├── windows/        #   eval-win2025-standard-cygwin.pkrvars.hcl, etc.
+│   └── .../
+├── http/               # Preseed, Kickstart, and autoinstall configs
+├── scripts/            # Provisioning scripts (bash, batch, powershell)
+├── floppy/             # Windows install-time scripts and Autounattend.xml
+├── vagrant/            # Vagrantfile templates
+├── archive/            # Legacy JSON templates and EOL OS files
+└── Makefile            # Build automation
+```
 
-* Build a base box using Packer
-* Create a Vagrantfile, use the base box from Packer, connect to the VM via WinRM (using the [vagrant-windows](https://github.com/WinRb/vagrant-windows) plugin) and disable the 'sshd' service or uninstall OpenSSH completely
-* Perform a Vagrant run and output a .box file
+### Template Pattern
 
-It's worth mentioning that many Chef cookbooks will not work properly through Cygwin's SSH environment on Windows. Specifically, packages that need access to environment-specific configurations such as the `PATH` variable, will fail. This includes packages that use the Windows installer, `msiexec.exe`.
+Each OS family has 4 HCL2 files in `templates/<os>/`:
 
-It's currently recommended that you add a second step to your pipeline and use Vagrant to install your packages through Chef.
+- **plugins.pkr.hcl** - Required Packer plugins (vmware, virtualbox, parallels)
+- **variables.pkr.hcl** - Variable declarations with types and defaults
+- **sources.pkr.hcl** - Source blocks for each hypervisor builder
+- **build.pkr.hcl** - Build block with provisioners
 
-### Getting Started
+Variant files in `vars/<os>/` override variables (ISO URL, checksum, VM name, etc.) and are passed via `-var-file=`.
 
-Trial versions of Windows 2012 R2 / 2016 are used by default. These images can be used for 180 days without activation.
+## Windows
 
-Alternatively – if you have access to [MSDN](http://msdn.microsoft.com) or [TechNet](http://technet.microsoft.com/) – you can download retail or volume license ISO images and place them in the `iso` directory. If you do, you should supply appropriate values for `iso_url` (e.g. `./iso/<path to your iso>.iso`) and `iso_checksum` (e.g. `<the md5 of your iso>`) to the Packer command. For example, to use the Windows 2008 R2 (With SP1) retail ISO:
+Windows templates use evaluation ISOs from the [Microsoft Evaluation Center](https://www.microsoft.com/en-us/evalcenter/). These images can be used for 180 days without activation.
 
-1. Download the Windows Server 2008 R2 with Service Pack 1 (x64) - DVD (English) ISO (`en_windows_server_2008_r2_with_sp1_x64_dvd_617601.iso`)
-2. Verify that `en_windows_server_2008_r2_with_sp1_x64_dvd_617601.iso` has an MD5 hash of `8dcde01d0da526100869e2457aafb7ca` (Microsoft lists a SHA1 hash of `d3fd7bf85ee1d5bdd72de5b2c69a7b470733cd0a`, which is equivalent)
-3. Clone this repo to a local directory
-4. Move `en_windows_server_2008_r2_with_sp1_x64_dvd_617601.iso` to the `iso` directory
-5. Run:
-    
-    ```
-    packer build \
-        -var iso_url=./iso/en_windows_server_2008_r2_with_sp1_x64_dvd_617601.iso \
-        -var iso_checksum=8dcde01d0da526100869e2457aafb7ca windows_2008_r2.json
-    ```
+The `autounattend_dir` variable in each Windows variant points to the correct `floppy/` subdirectory containing the `Autounattend.xml` for that Windows edition.
 
-### Variables
+Windows 11 includes TPM/SecureBoot/RAM bypass registry keys for VM compatibility.
 
-The Packer templates support the following variables:
+## BSD Notes
 
-| Name                | Description                                                      |
-| --------------------|------------------------------------------------------------------|
-| `iso_url`           | Path or URL to ISO file                                          |
-| `iso_checksum`      | Checksum (see also `iso_checksum_type`) of the ISO file          |
-| `iso_checksum_type` | The checksum algorithm to use (out of those supported by Packer) |
-| `autounattend`      | Path to the Autounattend.xml file                                |
+BSD templates handle per-hypervisor differences in disk device naming through separate source blocks with appropriate boot commands:
+- FreeBSD: `da0` (VMware/VBox), `ada0` (Parallels)
+- NetBSD: `sd0` (VMware), `wd0` (VBox/Parallels)
+- DragonFlyBSD: `da0` (VMware/VBox), `ad0` (Parallels)
 
-### Contributing
+Parallels Tools are disabled for all BSD guests (`parallels_tools_mode = "disable"`).
 
-Pull requests welcomed.
+## Credentials
 
-### Acknowledgements
+Default credentials for all images: `vagrant` / `vagrant` (standard for Vagrant boxes).
 
-[CloudBees](http://www.cloudbees.com) is providing a hosted [Jenkins](http://jenkins-ci.org/) master through their CloudBees FOSS program. We also use their [On-Premise Executor](https://developer.cloudbees.com/bin/view/DEV/On-Premise+Executors) feature to connect a physical [Mac Mini Server](http://www.apple.com/mac-mini/server/) running VMware Fusion.
+## Proxy Support
 
-![Powered By CloudBees](http://www.cloudbees.com/sites/default/files/Button-Powered-by-CB.png "Powered By CloudBees")![Built On DEV@Cloud](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png "Built On DEV@Cloud")
+Linux templates read proxy settings from environment variables: `http_proxy`, `https_proxy`, `ftp_proxy`, `rsync_proxy`, `no_proxy`.
+
+## Custom ISOs
+
+To use a custom ISO instead of the default download:
+
+```bash
+packer build \
+  -var iso_url=./iso/my-custom.iso \
+  -var 'iso_checksum=sha256:abc123...' \
+  -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl \
+  templates/ubuntu/
+```
+
+## Contributing
+
+Pull requests welcome. Please validate your templates before submitting:
+
+```bash
+make validate-all
+```

@@ -4,60 +4,72 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Collection of HashiCorp Packer templates (JSON format, no HCL) for building Vagrant-compatible VM images across multiple operating systems and hypervisors. Originally forked from VeeWee Windows templates.
+Collection of HashiCorp Packer HCL2 templates for building Vagrant-compatible VM images across 11 OS families and 3 hypervisors (VMware, VirtualBox, Parallels). Windows also supports Amazon EBS (currently disabled in build). Legacy JSON templates are archived in `archive/json-legacy/`.
 
-Requires Packer 0.5.1+. All templates use legacy JSON format.
+Requires Packer 1.7+ with HCL2 support. Currently validated with Packer 1.15.0.
 
 ## Build Commands
 
-Build a Linux image (base template + variant file):
-```bash
-packer build -var-file=ubuntu1804-server.json ubuntu.json
-packer build -var-file=centos7-server.json centos.json
-packer build -var-file=fedora-28-server.json fedora.json
-```
+All commands must be run from the repository root.
 
-Build a Windows image (variant file includes all config):
+Initialize plugins (one-time per OS):
 ```bash
-packer build -var-file=eval-win2016-standard-cygwin.json windows.json
-```
-
-Build with custom ISO:
-```bash
-packer build -var iso_url=./iso/my.iso -var iso_checksum=abc123 windows.json
+packer init templates/ubuntu/
 ```
 
 Validate a template:
 ```bash
-packer validate -var-file=ubuntu1804-server.json ubuntu.json
+packer validate -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl templates/ubuntu/
+```
+
+Build an image:
+```bash
+packer build -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl templates/ubuntu/
+```
+
+Build for a specific builder:
+```bash
+packer build -only='vmware-iso.ubuntu' -var-file=vars/ubuntu/ubuntu-2204-server.pkrvars.hcl templates/ubuntu/
+```
+
+Using the Makefile:
+```bash
+make validate OS=ubuntu VARIANT=ubuntu-2204-server
+make build OS=ubuntu VARIANT=ubuntu-2204-server
+make build-only OS=ubuntu VARIANT=ubuntu-2204-server BUILDER=vmware-iso.ubuntu
+make validate-all
 ```
 
 ## Architecture
 
-### Template Pattern (Two-File System)
+### Template Pattern (Two-Part System)
 
-**Base templates** (e.g., `ubuntu.json`, `centos.json`, `fedora.json`, `windows.json`, `oraclelinux.json`, `freebsd.json`) contain:
-- Builder definitions for all hypervisors (vmware-iso, virtualbox-iso, parallels-iso; windows.json also has amazon-ebs)
-- Provisioner scripts (shell scripts executed in order)
-- Default variable values with `{{ user 'variable_name' }}` references
+**Template directories** (`templates/<os>/`) contain 4 HCL2 files:
+- `plugins.pkr.hcl` - `required_plugins` block
+- `variables.pkr.hcl` - Variable declarations with types and defaults
+- `sources.pkr.hcl` - Source blocks for each hypervisor (vmware-iso, virtualbox-iso, parallels-iso)
+- `build.pkr.hcl` - Build block with provisioners
 
-**Variant files** (e.g., `ubuntu1804-server.json`, `centos7-desktop.json`, `eval-win2016-standard-cygwin.json`) contain:
-- Only variable overrides (ISO URLs, checksums, VM names, memory/CPU)
-- No builders or provisioners
+Windows also has `locals.pkr.hcl` for dynamic floppy file list construction.
+
+**Variant files** (`vars/<os>/*.pkrvars.hcl`) override variables per OS version:
+- ISO URL and checksum (algorithm prefix in value, e.g. `"sha256:abc..."`)
+- VM name, memory, CPUs
+- Guest OS type per hypervisor
 - Passed via `-var-file=` flag
 
 ### Directory Layout
 
-- `*.json` (root) - Packer templates and variant files (~146 files)
-- `http/` - Preseed (Debian/Ubuntu) and Kickstart (CentOS/Fedora/Oracle) files for unattended Linux installs
-- `answer_files/` - Windows Autounattend.xml files per edition
-- `floppy/` - Windows install-time scripts (.cmd, .bat, .ps1, .vbs) and per-edition Autounattend.xml
-- `scripts/bash/{distro}/` - Linux provisioning scripts (update, vagrant, sshd, vmware, virtualbox, parallels, cleanup, minimize)
-- `scripts/batch/` - Windows provisioning batch scripts
-- `scripts/powershell/` - Windows provisioning PowerShell scripts
-- `vagrant/` - Vagrantfile templates for output boxes
+- `templates/` - HCL2 Packer templates (11 OS families)
+- `vars/` - Variable value files (.pkrvars.hcl), organized by OS family
+- `http/` - Preseed (Debian/Ubuntu), Kickstart (CentOS/Fedora/Oracle), autoinstall configs
+- `floppy/` - Windows install-time scripts and per-edition Autounattend.xml
+- `scripts/bash/<distro>/` - Linux provisioning scripts
+- `scripts/batch/` - Windows batch provisioning scripts
+- `scripts/powershell/` - Windows PowerShell provisioning scripts
+- `vagrant/` - Vagrantfile templates
 - `iso/` - Local ISO cache (gitignored)
-- `old/` - Deprecated templates
+- `archive/` - Legacy JSON templates, EOL OS files, orphaned scripts
 
 ### Provisioning Pipeline
 
@@ -67,19 +79,29 @@ packer validate -var-file=ubuntu1804-server.json ubuntu.json
 1. Floppy-based scripts during install (Autounattend.xml triggers `00-run-all-scripts.cmd` which runs wget install, Cygwin/OpenSSH setup, WinRM)
 2. Post-install batch provisioners (vagrant user, config management tools, VM tools, cleanup, defrag, sdelete)
 
-### Conventions
+**BSD** uses su-based (FreeBSD) or doas-based (OpenBSD) privilege escalation. Parallels tools are disabled for all BSD guests.
 
-- Default credentials: `vagrant`/`vagrant` (standard for Vagrant boxes)
-- Proxy support: All Linux templates read `http_proxy`, `https_proxy`, `ftp_proxy`, `rsync_proxy`, `no_proxy` from environment variables
-- Windows SSH: Via Cygwin (primary) or OpenSSH; WinRM available on port 5985 but SSH is the Packer communicator
-- Windows uses trial/evaluation ISOs by default (180-day); retail ISOs go in `iso/` with custom `-var` overrides
-- Output directories follow `output-{vm_name}-{builder}/` pattern (gitignored)
+### HCL2 Conventions
 
-### OS Naming Conventions
+- `iso_checksum` includes algorithm prefix: `"sha256:abc..."` (no separate `iso_checksum_type`)
+- `ssh_timeout` (not `ssh_wait_timeout`)
+- `var.X` syntax (not `{{ user "X" }}`)
+- Go template syntax preserved in `boot_command` (e.g. `{{.Name}}`, `{{ .HTTPIP }}`)
+- `sensitive = true` on password and AWS key variables
+- Proxy variables use `default = env("http_proxy")` pattern
 
-- Ubuntu: `ubuntu{YYMM}-{server|desktop}.json`
-- CentOS: `centos{major}-{server|desktop}.json`
-- Fedora: `fedora-{version}-{server|desktop}.json`
-- Oracle Linux: `ol{major}{minor}[-desktop][-i386].json`
-- Windows: `eval-win{version}-{edition}[-cygwin|-ssh].json`
-- BSD: `{distro}{version}.json` (freebsd, openbsd, netbsd, dragonflybsd)
+### OS-Specific Notes
+
+- **Ubuntu 22.04+**: Uses autoinstall (cloud-init), not legacy preseed
+- **BSD**: Per-hypervisor boot commands due to different disk device names (wd0/sd0/da0/ad0)
+- **Windows**: `autounattend_dir` variable selects the correct floppy subdirectory per edition
+- **Windows 11**: Includes TPM/SecureBoot/RAM bypass registry keys for VM install
+- **ESXi**: VMware-only builder with nested virtualization (vhv.enable=TRUE)
+
+### Naming Conventions
+
+- Templates: `templates/<os-family>/`
+- Variants: `vars/<os-family>/<name>.pkrvars.hcl`
+- Source blocks: `source "<builder>" "<os-family>"` (e.g. `source "vmware-iso" "ubuntu"`)
+
+Default credentials: `vagrant`/`vagrant` (standard for Vagrant boxes).
