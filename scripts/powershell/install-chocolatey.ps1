@@ -3,7 +3,7 @@ Write-Output "Configuring chocolatey"
 Set-ExecutionPolicy unrestricted -force -Confirm:$false
 # $env:chocolateyProxyLocation = 'http://172.16.86.10:3128'
 # Install Chocolatey
-Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 # choco config set proxy http://172.16.86.10:3128
 choco install 7zip.install -y
 choco install baretail -y

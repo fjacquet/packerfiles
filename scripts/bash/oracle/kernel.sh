@@ -1,3 +1,4 @@
+#!/bin/bash -eux
 # Grub tweaks - default to RedHat-compatible kernel
 echo "==> Configuring Grub to use RedHat-compatible kernel"
 if grep -q -i "release 7" /etc/redhat-release ; then

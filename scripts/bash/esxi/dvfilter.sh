@@ -1,3 +1,4 @@
+#!/bin/sh
 echo "==> Open up outgoing firewall ports 443 and 80"
 esxcli network firewall ruleset set -e true -r httpClient
 # Install ESXI MAC LEARNING DVFILTER directly from VMware website, make

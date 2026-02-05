@@ -12,6 +12,6 @@ gpasswd -a ${USER} docker
 gpasswd -a ${SSH_USERNAME} docker
 
 echo "==> Starting docker"
-service docker start
+systemctl start docker
 echo "==> Enabling docker to start on reboot"
-chkconfig docker on
+systemctl enable docker

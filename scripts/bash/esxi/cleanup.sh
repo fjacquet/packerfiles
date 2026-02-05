@@ -1,3 +1,4 @@
+#!/bin/sh
 # Settings to ensure that ESXi cloning goes smooth, thanks @lamw ! see:
 # http://www.virtuallyghetto.com/2013/12/how-to-properly-clone-nested-esxi-vm.html
 esxcli system settings advanced set -o /Net/FollowHardwareMac -i 1

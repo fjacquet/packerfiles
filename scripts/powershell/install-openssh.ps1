@@ -6,7 +6,7 @@ Write-Output "AutoStart: $AutoStart"
 $is_64bit = [IntPtr]::size -eq 8
 Write-Output "Configuring openssh"
 # setup openssh
-$ssh_download_url = "https://www.mls-software.com/files/setupssh-7.1p1-1.exe"
+$ssh_download_url = "https://www.mls-software.com/files/setupssh-10.0p1-1.exe"
 
 if (!(Test-Path "C:\Program Files\OpenSSH\bin\ssh.exe")) {
     Write-Output "Downloading $ssh_download_url"
