@@ -55,13 +55,13 @@ source "proxmox-iso" "openbsd" {
     "ftp -o install.conf http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.install_path} && install -af install.conf && ",
     "echo \"permit nopass keepenv :wheel\" > /mnt/etc/doas.conf && reboot<enter>",
   ]
-  boot_wait        = "5s"
-  http_directory   = var.http_directory
-  os               = "other"
-  cores            = var.cpus
-  sockets          = 1
-  memory           = var.memory
-  scsi_controller  = "virtio-scsi-single"
+  boot_wait       = "5s"
+  http_directory  = var.http_directory
+  os              = "other"
+  cores           = var.cpus
+  sockets         = 1
+  memory          = var.memory
+  scsi_controller = "virtio-scsi-single"
 
   disks {
     type         = "scsi"
@@ -74,9 +74,9 @@ source "proxmox-iso" "openbsd" {
     bridge = var.proxmox_network_bridge
   }
 
-  ssh_username         = var.ssh_username
-  ssh_password         = var.ssh_password
-  ssh_timeout          = "10000s"
-  shutdown_command     = "doas shutdown -p now"
-  template_name        = var.vm_name
+  ssh_username     = var.ssh_username
+  ssh_password     = var.ssh_password
+  ssh_timeout      = "10000s"
+  shutdown_command = "doas shutdown -p now"
+  template_name    = var.vm_name
 }

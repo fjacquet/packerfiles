@@ -90,14 +90,14 @@ source "proxmox-iso" "windows" {
     unmount  = true
   }
 
-  os               = "win11"
-  bios             = "ovmf"
-  machine          = "q35"
-  cores            = var.cpus
-  sockets          = 1
-  memory           = var.memory
-  scsi_controller  = "virtio-scsi-single"
-  floppy_files     = local.floppy_base
+  os              = "win11"
+  bios            = "ovmf"
+  machine         = "q35"
+  cores           = var.cpus
+  sockets         = 1
+  memory          = var.memory
+  scsi_controller = "virtio-scsi-single"
+  floppy_files    = local.floppy_base
 
   disks {
     type         = "scsi"
@@ -110,11 +110,11 @@ source "proxmox-iso" "windows" {
     bridge = var.proxmox_network_bridge
   }
 
-  ssh_username         = "vagrant"
-  ssh_password         = "vagrant"
-  ssh_timeout          = "10000s"
-  shutdown_command     = var.shutdown_command
-  template_name        = var.vm_name
+  ssh_username     = "vagrant"
+  ssh_password     = "vagrant"
+  ssh_timeout      = "10000s"
+  shutdown_command = var.shutdown_command
+  template_name    = var.vm_name
 }
 
 source "azure-arm" "windows" {

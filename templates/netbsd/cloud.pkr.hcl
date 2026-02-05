@@ -61,13 +61,13 @@ source "proxmox-iso" "netbsd" {
     "ftp -o /tmp/autoinst.sh http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.install_path} && chmod a+x /tmp/autoinst.sh",
     " && /tmp/autoinst.sh -s 2048 -h ${var.hostname} wd0 && reboot<enter>",
   ]
-  boot_wait        = "5s"
-  http_directory   = var.http_directory
-  os               = "other"
-  cores            = var.cpus
-  sockets          = 1
-  memory           = var.memory
-  scsi_controller  = "virtio-scsi-single"
+  boot_wait       = "5s"
+  http_directory  = var.http_directory
+  os              = "other"
+  cores           = var.cpus
+  sockets         = 1
+  memory          = var.memory
+  scsi_controller = "virtio-scsi-single"
 
   disks {
     type         = "scsi"
@@ -80,9 +80,9 @@ source "proxmox-iso" "netbsd" {
     bridge = var.proxmox_network_bridge
   }
 
-  ssh_username         = var.ssh_username
-  ssh_password         = var.ssh_password
-  ssh_timeout          = "10000s"
-  shutdown_command     = "sudo /sbin/shutdown -p now"
-  template_name        = var.vm_name
+  ssh_username     = var.ssh_username
+  ssh_password     = var.ssh_password
+  ssh_timeout      = "10000s"
+  shutdown_command = "sudo /sbin/shutdown -p now"
+  template_name    = var.vm_name
 }

@@ -120,13 +120,13 @@ source "proxmox-iso" "ubuntu" {
     unmount  = true
   }
 
-  boot_command     = var.boot_command
-  boot_wait        = "5s"
-  os               = "l26"
-  cores            = var.cpus
-  sockets          = 1
-  memory           = var.memory
-  scsi_controller  = "virtio-scsi-single"
+  boot_command    = var.boot_command
+  boot_wait       = "5s"
+  os              = "l26"
+  cores           = var.cpus
+  sockets         = 1
+  memory          = var.memory
+  scsi_controller = "virtio-scsi-single"
 
   disks {
     type         = "scsi"

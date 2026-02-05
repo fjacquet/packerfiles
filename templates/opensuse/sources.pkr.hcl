@@ -4,20 +4,20 @@ source "vmware-iso" "opensuse" {
     " inst.auto=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.agama_profile}",
     "<f10>",
   ]
-  boot_wait            = "5s"
-  disk_size            = var.disk_size
-  guest_os_type        = var.vmware_guest_os_type
-  headless             = var.headless
-  http_directory       = var.http_directory
-  iso_checksum         = var.iso_checksum
-  iso_urls             = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
-  output_directory     = "output-${var.vm_name}-vmware-iso"
-  shutdown_command      = var.shutdown_command
-  ssh_password         = var.ssh_password
-  ssh_username         = var.ssh_username
-  ssh_timeout          = "10000s"
-  tools_upload_flavor  = "linux"
-  vm_name              = var.vm_name
+  boot_wait           = "5s"
+  disk_size           = var.disk_size
+  guest_os_type       = var.vmware_guest_os_type
+  headless            = var.headless
+  http_directory      = var.http_directory
+  iso_checksum        = var.iso_checksum
+  iso_urls            = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
+  output_directory    = "output-${var.vm_name}-vmware-iso"
+  shutdown_command    = var.shutdown_command
+  ssh_password        = var.ssh_password
+  ssh_username        = var.ssh_username
+  ssh_timeout         = "10000s"
+  tools_upload_flavor = "linux"
+  vm_name             = var.vm_name
   vmx_data = {
     "cpuid.coresPerSocket" = "1"
     "memsize"              = var.memory
@@ -32,20 +32,20 @@ source "virtualbox-iso" "opensuse" {
     " inst.auto=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.agama_profile}",
     "<f10>",
   ]
-  boot_wait               = "5s"
-  disk_size               = var.disk_size
-  guest_additions_path    = "VBoxGuestAdditions_{{.Version}}.iso"
-  guest_os_type           = var.virtualbox_guest_os_type
-  hard_drive_interface    = "sata"
-  headless                = var.headless
-  http_directory          = var.http_directory
-  iso_checksum            = var.iso_checksum
-  iso_urls                = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
-  output_directory        = "output-${var.vm_name}-virtualbox-iso"
-  shutdown_command         = var.shutdown_command
-  ssh_password            = var.ssh_password
-  ssh_username            = var.ssh_username
-  ssh_timeout             = "10000s"
+  boot_wait            = "5s"
+  disk_size            = var.disk_size
+  guest_additions_path = "VBoxGuestAdditions_{{.Version}}.iso"
+  guest_os_type        = var.virtualbox_guest_os_type
+  hard_drive_interface = "sata"
+  headless             = var.headless
+  http_directory       = var.http_directory
+  iso_checksum         = var.iso_checksum
+  iso_urls             = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
+  output_directory     = "output-${var.vm_name}-virtualbox-iso"
+  shutdown_command     = var.shutdown_command
+  ssh_password         = var.ssh_password
+  ssh_username         = var.ssh_username
+  ssh_timeout          = "10000s"
   vboxmanage = [
     ["modifyvm", "{{.Name}}", "--memory", var.memory],
     ["modifyvm", "{{.Name}}", "--cpus", var.cpus],

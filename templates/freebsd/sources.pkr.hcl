@@ -10,20 +10,20 @@ source "vmware-iso" "freebsd" {
     "dhclient -l /tmp/dhclient.lease.em0 em0<enter><wait>",
     "fetch -o /tmp/installerconfig http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.install_path} && bsdinstall script /tmp/installerconfig<enter><wait>",
   ]
-  boot_wait            = "6s"
-  disk_size            = var.disk_size
-  guest_os_type        = var.vmware_guest_os_type
-  headless             = var.headless
-  http_directory       = var.http_directory
-  iso_checksum         = var.iso_checksum
-  iso_urls             = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
-  output_directory     = "output-${var.vm_name}-vmware-iso"
-  shutdown_command      = "echo '${var.ssh_password}' | su -m root -c 'shutdown -p now'"
-  ssh_password         = var.ssh_password
-  ssh_username         = var.ssh_username
-  ssh_timeout          = "10000s"
-  tools_upload_flavor  = "linux"
-  vm_name              = var.vm_name
+  boot_wait           = "6s"
+  disk_size           = var.disk_size
+  guest_os_type       = var.vmware_guest_os_type
+  headless            = var.headless
+  http_directory      = var.http_directory
+  iso_checksum        = var.iso_checksum
+  iso_urls            = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
+  output_directory    = "output-${var.vm_name}-vmware-iso"
+  shutdown_command    = "echo '${var.ssh_password}' | su -m root -c 'shutdown -p now'"
+  ssh_password        = var.ssh_password
+  ssh_username        = var.ssh_username
+  ssh_timeout         = "10000s"
+  tools_upload_flavor = "linux"
+  vm_name             = var.vm_name
   vmx_data = {
     "memsize"  = var.memory
     "numvcpus" = var.cpus
@@ -53,7 +53,7 @@ source "virtualbox-iso" "freebsd" {
   iso_checksum         = var.iso_checksum
   iso_urls             = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
   output_directory     = "output-${var.vm_name}-virtualbox-iso"
-  shutdown_command      = "echo '${var.ssh_password}' | su -m root -c 'shutdown -p now'"
+  shutdown_command     = "echo '${var.ssh_password}' | su -m root -c 'shutdown -p now'"
   ssh_password         = var.ssh_password
   ssh_username         = var.ssh_username
   ssh_timeout          = "10000s"
@@ -77,14 +77,14 @@ source "parallels-iso" "freebsd" {
     "dhclient -l /tmp/dhclient.lease.em0 em0<enter><wait>",
     "fetch -o /tmp/installerconfig http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.install_path} && bsdinstall script /tmp/installerconfig<enter><wait>",
   ]
-  boot_wait              = "6s"
-  disk_size              = var.disk_size
-  guest_os_type          = var.parallels_guest_os_type
-  http_directory         = var.http_directory
-  iso_checksum           = var.iso_checksum
-  iso_urls               = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
-  output_directory       = "output-${var.vm_name}-parallels-iso"
-  parallels_tools_mode   = "disable"
+  boot_wait            = "6s"
+  disk_size            = var.disk_size
+  guest_os_type        = var.parallels_guest_os_type
+  http_directory       = var.http_directory
+  iso_checksum         = var.iso_checksum
+  iso_urls             = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
+  output_directory     = "output-${var.vm_name}-parallels-iso"
+  parallels_tools_mode = "disable"
   prlctl = [
     ["set", "{{.Name}}", "--memsize", var.memory],
     ["set", "{{.Name}}", "--cpus", var.cpus],
@@ -93,7 +93,7 @@ source "parallels-iso" "freebsd" {
     ["set", "{{.Name}}", "--device-del", "parallel0"],
   ]
   prlctl_version_file = ".prlctl_version"
-  shutdown_command     = "echo '${var.ssh_password}' | su -m root -c 'shutdown -p now'"
+  shutdown_command    = "echo '${var.ssh_password}' | su -m root -c 'shutdown -p now'"
   ssh_password        = var.ssh_password
   ssh_username        = var.ssh_username
   ssh_timeout         = "10000s"

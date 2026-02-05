@@ -11,7 +11,7 @@ source "vmware-iso" "esxi" {
   iso_checksum     = var.iso_checksum
   iso_url          = var.iso_url
   output_directory = "output-${var.vm_name}-vmware-iso"
-  shutdown_command  = var.shutdown_command
+  shutdown_command = var.shutdown_command
   ssh_password     = var.ssh_password
   ssh_username     = var.ssh_username
   ssh_timeout      = "60m"

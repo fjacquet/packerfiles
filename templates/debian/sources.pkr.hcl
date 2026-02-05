@@ -11,19 +11,19 @@ source "vmware-iso" "debian" {
     " netcfg/get_domain=vm ",
     "<enter>",
   ]
-  disk_size            = var.disk_size
-  guest_os_type        = var.vmware_guest_os_type
-  headless             = var.headless
-  http_directory       = var.http_directory
-  iso_checksum         = var.iso_checksum
-  iso_urls             = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
-  output_directory     = "output-${var.vm_name}-vmware-iso"
-  shutdown_command      = var.shutdown_command
-  ssh_password         = var.ssh_password
-  ssh_username         = var.ssh_username
-  ssh_timeout          = "10000s"
-  tools_upload_flavor  = "linux"
-  vm_name              = var.vm_name
+  disk_size           = var.disk_size
+  guest_os_type       = var.vmware_guest_os_type
+  headless            = var.headless
+  http_directory      = var.http_directory
+  iso_checksum        = var.iso_checksum
+  iso_urls            = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
+  output_directory    = "output-${var.vm_name}-vmware-iso"
+  shutdown_command    = var.shutdown_command
+  ssh_password        = var.ssh_password
+  ssh_username        = var.ssh_username
+  ssh_timeout         = "10000s"
+  tools_upload_flavor = "linux"
+  vm_name             = var.vm_name
   vmx_data = {
     "memsize"  = var.memory
     "numvcpus" = var.cpus
@@ -53,7 +53,7 @@ source "virtualbox-iso" "debian" {
   iso_urls             = compact(["${var.iso_path}/${var.iso_name}", var.iso_url])
   output_directory     = "output-${var.vm_name}-virtualbox-iso"
   post_shutdown_delay  = "1m"
-  shutdown_command      = var.shutdown_command
+  shutdown_command     = var.shutdown_command
   ssh_password         = var.ssh_password
   ssh_username         = var.ssh_username
   ssh_timeout          = "10000s"
@@ -90,7 +90,7 @@ source "parallels-iso" "debian" {
     ["set", "{{.Name}}", "--cpus", var.cpus],
   ]
   prlctl_version_file = ".prlctl_version"
-  shutdown_command     = var.shutdown_command
+  shutdown_command    = var.shutdown_command
   ssh_password        = var.ssh_password
   ssh_username        = var.ssh_username
   ssh_timeout         = "10000s"

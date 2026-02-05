@@ -58,13 +58,13 @@ source "proxmox-iso" "freebsd" {
     "dhclient -l /tmp/dhclient.lease.em0 em0<enter><wait>",
     "fetch -o /tmp/installerconfig http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.install_path} && bsdinstall script /tmp/installerconfig<enter><wait>",
   ]
-  boot_wait        = "5s"
-  http_directory   = var.http_directory
-  os               = "other"
-  cores            = var.cpus
-  sockets          = 1
-  memory           = var.memory
-  scsi_controller  = "virtio-scsi-single"
+  boot_wait       = "5s"
+  http_directory  = var.http_directory
+  os              = "other"
+  cores           = var.cpus
+  sockets         = 1
+  memory          = var.memory
+  scsi_controller = "virtio-scsi-single"
 
   disks {
     type         = "scsi"
@@ -77,9 +77,9 @@ source "proxmox-iso" "freebsd" {
     bridge = var.proxmox_network_bridge
   }
 
-  ssh_username         = var.ssh_username
-  ssh_password         = var.ssh_password
-  ssh_timeout          = "10000s"
-  shutdown_command     = "echo '${var.ssh_password}' | su -m root -c 'shutdown -p now'"
-  template_name        = var.vm_name
+  ssh_username     = var.ssh_username
+  ssh_password     = var.ssh_password
+  ssh_timeout      = "10000s"
+  shutdown_command = "echo '${var.ssh_password}' | su -m root -c 'shutdown -p now'"
+  template_name    = var.vm_name
 }
