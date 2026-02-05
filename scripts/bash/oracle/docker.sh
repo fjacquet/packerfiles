@@ -7,7 +7,7 @@ echo "==> Create the docker group"
 # Add the docker group if it doesn't already exist
 groupadd docker
 
-echo "==> Add the connected "${USER}" to the docker group."
+echo "==> Add the connected ${USER} to the docker group."
 gpasswd -a ${USER} docker
 gpasswd -a ${SSH_USERNAME} docker
 

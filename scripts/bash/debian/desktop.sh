@@ -26,4 +26,4 @@ systemctl disable NetworkManager.service
 
 echo "==> Removing desktop components"
 apt-get -y purge gnome-getting-started-docs
-apt-get -y purge $(dpkg --get-selections | grep -v deinstall | grep libreoffice | cut -f 1)
+apt-get -y purge "$(dpkg --get-selections | grep -v deinstall | grep libreoffice | cut -f 1)"

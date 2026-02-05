@@ -13,11 +13,11 @@ VAGRANT_INSECURE_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrt
 if [ "$INSTALL_VAGRANT_KEY" = "true" ] || [ "$INSTALL_VAGRANT_KEY" = "1" ]; then
 
     echo "==> Installing vagrant key";
-    mkdir -p $SSH_USER_HOME/.ssh;
-    chmod 700 $SSH_USER_HOME/.ssh;
+    mkdir -p "$SSH_USER_HOME"/.ssh;
+    chmod 700 "$SSH_USER_HOME"/.ssh;
 
     # https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub
-    echo "${VAGRANT_INSECURE_KEY}" > $SSH_USER_HOME/.ssh/authorized_keys;
-    chmod 600 $SSH_USER_HOME/.ssh/authorized_keys;
-    chown -R $SSH_USER:`id -g $SSH_USER` $SSH_USER_HOME/.ssh;
+    echo "${VAGRANT_INSECURE_KEY}" > "$SSH_USER_HOME"/.ssh/authorized_keys;
+    chmod 600 "$SSH_USER_HOME"/.ssh/authorized_keys;
+    chown -R "$SSH_USER":"$(id -g "$SSH_USER")" "$SSH_USER_HOME"/.ssh;
 fi

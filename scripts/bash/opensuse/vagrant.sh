@@ -8,17 +8,17 @@ VAGRANT_INSECURE_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrt
 
 if [ "$INSTALL_VAGRANT_KEY" = "true" ] || [ "$INSTALL_VAGRANT_KEY" = "1" ]; then
   # Add vagrant user (if it doesn't already exist)
-  if ! id -u $SSH_USER >/dev/null 2>&1; then
+  if ! id -u "$SSH_USER" >/dev/null 2>&1; then
       echo '==> Creating vagrant user'
-      /usr/sbin/groupadd $SSH_USER
-      /usr/sbin/useradd $SSH_USER -g $SSH_USER
+      /usr/sbin/groupadd "$SSH_USER"
+      /usr/sbin/useradd "$SSH_USER" -g "$SSH_USER"
       echo "${SSH_USER}:${SSH_USER}" | chpasswd
       echo "${SSH_USER}        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
   fi
 
   echo '==> Installing Vagrant SSH key'
-  mkdir -pm 700 ${SSH_USER_HOME}/.ssh
-  echo "${VAGRANT_INSECURE_KEY}" > $SSH_USER_HOME/.ssh/authorized_keys
-  chmod 0600 ${SSH_USER_HOME}/.ssh/authorized_keys
-  chown -R ${SSH_USER}:${SSH_USER} ${SSH_USER_HOME}/.ssh
+  mkdir -p "${SSH_USER_HOME}/.ssh" && chmod 700 "${SSH_USER_HOME}/.ssh"
+  echo "${VAGRANT_INSECURE_KEY}" > "$SSH_USER_HOME"/.ssh/authorized_keys
+  chmod 0600 "${SSH_USER_HOME}"/.ssh/authorized_keys
+  chown -R "${SSH_USER}":"${SSH_USER}" "${SSH_USER_HOME}"/.ssh
 fi

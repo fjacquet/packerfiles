@@ -10,8 +10,8 @@ if grep -q -i "release 6" /etc/redhat-release ; then
     rm -f /etc/udev/rules.d/70-persistent-net.rules
     mkdir /etc/udev/rules.d/70-persistent-net.rules
 
-    for ndev in `ls -1 /etc/sysconfig/network-scripts/ifcfg-*`; do
-    if [ "`basename $ndev`" != "ifcfg-lo" ]; then
+    for ndev in /etc/sysconfig/network-scripts/ifcfg-*; do
+    if [ "$(basename "$ndev")" != "ifcfg-lo" ]; then
         sed -i '/^HWADDR/d' "$ndev";
         sed -i '/^UUID/d' "$ndev";
     fi
@@ -19,8 +19,8 @@ if grep -q -i "release 6" /etc/redhat-release ; then
 fi
 # Better fix that persists package updates: http://serverfault.com/a/485689
 touch /etc/udev/rules.d/75-persistent-net-generator.rules
-for ndev in `ls -1 /etc/sysconfig/network-scripts/ifcfg-*`; do
-    if [ "`basename $ndev`" != "ifcfg-lo" ]; then
+for ndev in /etc/sysconfig/network-scripts/ifcfg-*; do
+    if [ "$(basename "$ndev")" != "ifcfg-lo" ]; then
         sed -i '/^HWADDR/d' "$ndev";
         sed -i '/^UUID/d' "$ndev";
     fi
@@ -45,7 +45,7 @@ rpmdb --rebuilddb
 rm -f /var/lib/rpm/__db*
 
 # delete any logs that have built up during the install
-find /var/log/ -name *.log -exec rm -f {} \;
+find /var/log/ -name "*.log" -exec rm -f {} \;
 
 echo '==> Clear out swap and disable until reboot'
 set +e

@@ -12,7 +12,7 @@ dpkg --get-selections | grep -v deinstall
 
 # Remove some packages to get a minimal install
 echo "==> Removing all linux kernels except the currrent one"
-dpkg --list | awk '{ print $2 }' | grep 'linux-image-3.*-generic' | grep -v $(uname -r) | xargs apt-get -y purge
+dpkg --list | awk '{ print $2 }' | grep 'linux-image-3.*-generic' | grep -v "$(uname -r)" | xargs apt-get -y purge
 echo "==> Removing linux headers"
 dpkg --list | awk '{ print $2 }' | grep linux-headers | xargs apt-get -y purge
 rm -rf /usr/src/linux-headers*
@@ -31,7 +31,7 @@ echo "==> Removing X11 libraries"
 apt-get -y purge libx11-data xauth libxmuu1 libxcb1 libx11-6 libxext6
 echo "==> Removing desktop components"
 apt-get -y purge gnome-getting-started-docs
-apt-get -y purge $(dpkg --get-selections | grep -v deinstall | grep libreoffice | cut -f 1)
+apt-get -y purge "$(dpkg --get-selections | grep -v deinstall | grep libreoffice | cut -f 1)"
 echo "==> Removing obsolete networking components"
 apt-get -y purge ppp pppconfig pppoeconf
 echo "==> Removing other oddities"

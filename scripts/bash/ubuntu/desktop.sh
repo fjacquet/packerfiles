@@ -34,7 +34,7 @@ elif [[ $DISTRIB_RELEASE == 14.04 || $DISTRIB_RELEASE == 15.04 || $DISTRIB_RELEA
     LIGHTDM_CONFIG=/etc/lightdm/lightdm.conf
     GDM_CUSTOM_CONFIG=/etc/gdm/custom.conf
 
-    mkdir -p $(dirname ${GDM_CUSTOM_CONFIG})
+    mkdir -p "$(dirname "${GDM_CUSTOM_CONFIG}")"
     echo "[daemon]" >> $GDM_CUSTOM_CONFIG
     echo "# Enabling automatic login" >> $GDM_CUSTOM_CONFIG
     echo "AutomaticLoginEnable=True" >> $GDM_CUSTOM_CONFIG

@@ -27,7 +27,7 @@ case "$?" in
 esac
 set -e
 if [ "x${swapuuid}" != "x" ]; then
-    swappart=$(readlink -f /dev/disk/by-uuid/$swapuuid)
+    swappart=$(readlink -f "/dev/disk/by-uuid/$swapuuid")
     /sbin/swapoff "${swappart}"
     dd if=/dev/zero of="${swappart}" bs=1M || echo "dd exit code $? is suppressed"
     /sbin/mkswap -U "${swapuuid}" "${swappart}"

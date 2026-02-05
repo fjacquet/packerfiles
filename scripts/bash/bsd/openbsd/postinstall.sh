@@ -11,15 +11,16 @@ echo "==> Setup NTP";
 echo 'ntpd_flags=""' >> /etc/rc.conf.local;
 
 echo "==> Install curl";
-. /home/${SSH_USERNAME}/.profile;
+# shellcheck source=/dev/null
+. "/home/${SSH_USERNAME}/.profile";
 pkg_add -I curl;
 
 # Use "doas" from 5.8
-if [ "$major_version" -le 5 -a "$minor_version" -lt 8 ]; then
+if [ "$major_version" -le 5 ] && [ "$minor_version" -lt 8 ]; then
   echo "==> Install sudo";
   pkg_add -I sudo;
 else
-  echo 'alias sudo="echo \"Use doas instead of sudo!\""' >> /home/${SSH_USERNAME}/.profile;
+  echo 'alias sudo="echo \"Use doas instead of sudo!\""' >> "/home/${SSH_USERNAME}/.profile";
 fi
 
 echo "==> Enable NFS";

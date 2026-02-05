@@ -49,13 +49,13 @@ apt-get -y purge deborphan dialog
 echo "==> Removing man pages"
 rm -rf /usr/share/man/*
 echo "==> Removing APT files"
-find /var/lib/apt -type f | xargs rm -f
+find /var/lib/apt -type f -exec rm -f {} +
 echo "==> Removing any docs"
 rm -rf /usr/share/doc/*
 echo "==> Removing caches"
 find /var/cache -type f -exec rm -rf {} \;
 # delete any logs that have built up during the install
-find /var/log/ -name *.log -exec rm -f {} \;
+find /var/log/ -name '*.log' -exec rm -f {} \;
 
 echo "==> Disk usage after cleanup"
 df -h

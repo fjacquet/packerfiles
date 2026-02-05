@@ -9,14 +9,14 @@ VAGRANT_INSECURE_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrt
 # the future, so also check for 'true'.
 if [ "$INSTALL_VAGRANT_KEY" = "true" ] || [ "$INSTALL_VAGRANT_KEY" = "1" ]; then
     # Create Vagrant user (if not already present)
-    if ! id -u $SSH_USER >/dev/null 2>&1; then
+    if ! id -u "$SSH_USER" >/dev/null 2>&1; then
         echo "==> Creating $SSH_USER user";
-        /usr/sbin/groupadd $SSH_USER;
-        /usr/sbin/useradd $SSH_USER -g $SSH_USER -G wheel -d $SSH_USER_HOME --create-home;
+        /usr/sbin/groupadd "$SSH_USER";
+        /usr/sbin/useradd "$SSH_USER" -g "$SSH_USER" -G wheel -d "$SSH_USER_HOME" --create-home;
         echo "${SSH_USER}:${SSH_PASS}" | chpasswd;
     fi
 
-    pw usermod $SSH_USER -G wheel;
+    pw usermod "$SSH_USER" -G wheel;
 
     # Set up sudo
     if [ -x /usr/local/bin/sudo ]; then
@@ -28,12 +28,12 @@ if [ "$INSTALL_VAGRANT_KEY" = "true" ] || [ "$INSTALL_VAGRANT_KEY" = "1" ]; then
     fi
 
     echo "==> Installing vagrant key";
-    mkdir $SSH_USER_HOME/.ssh;
-    chmod 700 $SSH_USER_HOME/.ssh;
-    cd $SSH_USER_HOME/.ssh;
+    mkdir "$SSH_USER_HOME"/.ssh;
+    chmod 700 "$SSH_USER_HOME"/.ssh;
+    cd "$SSH_USER_HOME"/.ssh || exit;
 
     # https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub
-    echo "${VAGRANT_INSECURE_KEY}" > $SSH_USER_HOME/.ssh/authorized_keys;
-    chmod 600 $SSH_USER_HOME/.ssh/authorized_keys;
-    chown -R $SSH_USER:$SSH_USER $SSH_USER_HOME/.ssh;
+    echo "${VAGRANT_INSECURE_KEY}" > "$SSH_USER_HOME"/.ssh/authorized_keys;
+    chmod 600 "$SSH_USER_HOME"/.ssh/authorized_keys;
+    chown -R "$SSH_USER":"$SSH_USER" "$SSH_USER_HOME"/.ssh;
 fi

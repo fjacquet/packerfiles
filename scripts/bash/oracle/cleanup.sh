@@ -18,8 +18,9 @@ if grep -q -i "release 7" /etc/redhat-release ; then
   # radio off & remove all interface configration
   nmcli radio all off
   /bin/systemctl stop NetworkManager.service
-  for ifcfg in `ls /etc/sysconfig/network-scripts/ifcfg-* |grep -v ifcfg-lo` ; do
-    rm -f $ifcfg
+  for ifcfg in /etc/sysconfig/network-scripts/ifcfg-*; do
+    [[ "$ifcfg" == *ifcfg-lo ]] && continue
+    rm -f "$ifcfg"
   done
   rm -rf /var/lib/NetworkManager/*
 
@@ -49,10 +50,10 @@ DISK_USAGE_BEFORE_CLEANUP=$(df -h)
 
 # Other locales will be removed from the VM
 KEEP_LANGUAGE="en"
-KEEP_LOCALE="en_US"
+export KEEP_LOCALE="en_US"
 echo "==> Remove unused man page locales"
 pushd /usr/share/man
-if [ $(ls | wc -w) -gt 16 ]; then
+if [ "$(ls | wc -w)" -gt 16 ]; then
   mkdir ../tmp_dir
   mv man* $KEEP_LANGUAGE $SECONDARY_LANGUAGE ../tmp_dir
   rm -rf *
@@ -106,7 +107,7 @@ rm -f /EMPTY
 sync
 
 echo "==> Disk usage before cleanup"
-echo ${DISK_USAGE_BEFORE_CLEANUP}
+echo "${DISK_USAGE_BEFORE_CLEANUP}"
 
 echo "==> Disk usage after cleanup"
 df -h

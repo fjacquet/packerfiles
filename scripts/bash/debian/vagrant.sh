@@ -26,7 +26,7 @@ mv /tmp/vagrant /etc/sudoers.d/
 # the future, so also check for 'true'.
 if [ "$INSTALL_VAGRANT_KEY" = "true" ] || [ "$INSTALL_VAGRANT_KEY" = "1" ]; then
     echo '==> Installing Vagrant SSH key'
-    mkdir -pm 700 $SSH_USER_HOME/.ssh
+    mkdir -p "$SSH_USER_HOME/.ssh" && chmod 700 "$SSH_USER_HOME/.ssh"
     # https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub
     echo "${VAGRANT_INSECURE_KEY}" > $SSH_USER_HOME/.ssh/authorized_keys
     chmod 600 $SSH_USER_HOME/.ssh/authorized_keys

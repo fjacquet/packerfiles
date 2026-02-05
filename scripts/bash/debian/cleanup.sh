@@ -34,9 +34,9 @@ rm -f /home/vagrant/.bash_history
 find /var/log -type f | while read f; do echo -ne '' > $f; done;
 
 echo "==> Clearing last login information"
->/var/log/lastlog
->/var/log/wtmp
->/var/log/btmp
+true > /var/log/lastlog
+true > /var/log/wtmp
+true > /var/log/btmp
 
 # Whiteout root
 echo '==> Clear out root fs'

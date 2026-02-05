@@ -52,7 +52,7 @@ if [[ $PACKER_BUILDER_TYPE =~ vmware ]]; then
     # Uninstall fuse to fake out the vmware install so it won't try to
     # enable the VMware blocking filesystem
     dnf erase -y fuse
-    dnf -y install kernel-headers-$(uname -r) kernel-devel-$(uname -r) gcc make perl
+    dnf -y install "kernel-headers-$(uname -r)" "kernel-devel-$(uname -r)" gcc make perl
 
     install_open_vm_tools
     echo "==> Removing packages needed for building guest tools"

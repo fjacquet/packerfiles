@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USERNAME=vagrant
+export USERNAME=vagrant
 
 cat /etc/redhat-release
 if grep -q -i "release 7" /etc/redhat-release ; then
